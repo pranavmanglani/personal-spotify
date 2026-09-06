@@ -60,4 +60,5 @@ const songs = [
     { id: "the-real-slim-shady", title: "The Real Slim Shady", artist: "Unknown Artist", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/the-real-slim-shady.mp3" },
     { id: "tokyo-drift", title: "Tokyo Drift", artist: "Unknown Artist", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/tokyo-drift.mp3" },
     { id: "until-i-found-you", title: "Until I Found You", artist: "Unknown Artist", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/until-i-found-you.mp3" }
+    { id: "stan", title: "Stan", artist:"eminem", file:https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/stan.mp3"}
 ];
