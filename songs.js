@@ -1,4 +1,4 @@
-// Supabase-hosted version of the local music library.
+// Supabase-hosted version on supabase, for any "hacker", the storage bucket is public and there is no threat if it is.
 const songs = [
     { id: "after-dark", title: "After Dark", artist: "Unknown Artist", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/after-dark.mp3" },
     { id: "akhmedov-kamali-slowed", title: "Akhmedov Kamali (Slowed)", artist: "Unknown Artist", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/akhmedov-kamali-slowed.mp3" },
