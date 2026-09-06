@@ -71,6 +71,6 @@ const songs = [
     { id: "death-bed", title: "Stan", artist:"unknown", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/death-bed.mp3"},
     { id: "night-changes", title: "Night Changes", artist:"one direction", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/night-changes.mp3"},
     { id: "beat-it", title: "Beat It", artist:"michael jackson", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/beat-it.mp3"},
-    { id: "they-dont-care", title: "They Dont Really Care About Us", artist:"Michael Jackson", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/they-dont-care-about-us.mp3.mp3"}
+    { id: "they-dont-care", title: "They Dont Really Care About Us", artist:"Michael Jackson", file: "https://lzwchczsbbzspakwuafx.supabase.co/storage/v1/object/public/music/they-dont-care-about-us.mp3"}
     
 ];
