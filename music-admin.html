@@ -1,1853 +1,2302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Music Admin — Optima M3</title>
+<title>Music- Optima M3 — Admin</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
-
 :root{
-    --bg:#060708;
-    --panel:#121418;
-    --panel2:#1a1e23;
-    --border:rgba(255,255,255,.08);
-    --border-light:rgba(255,255,255,.16);
-
-    --text:#fff;
-    --muted:#a0a6b0;
-    --muted2:#6c727e;
-
-    --accent:#1ed760;
-    --accent-bright:#22f06b;
-    --accent-soft:rgba(30,215,96,.13);
-    --danger:#ff5c7a;
-
-    --radius:20px;
+  --bg:#060708;
+  --panel:#0c1010;
+  --panel2:#101515;
+  --border:rgba(255,255,255,.07);
+  --text:#f2f5f3;
+  --muted:#8b9690;
+  --accent:#1ed760;
+  --accent-bright:#22f06b;
+  --accent-soft:rgba(30,215,96,.12);
+  --accent-glow:rgba(30,215,96,.25);
+  --danger:#ff5c5c;
 }
 
-html{
-    background:var(--bg);
-    color-scheme:dark;
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
 body{
-    min-height:100vh;
-
-    background:
-        radial-gradient(
-            circle at 85% -10%,
-            rgba(30,215,96,.18),
-            transparent 45%
-        ),
-        radial-gradient(
-            circle at 15% 40%,
-            rgba(18,120,55,.12),
-            transparent 40%
-        ),
-        var(--bg);
-
-    color:var(--text);
-
-    font-family:
-        Inter,
-        ui-sans-serif,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
+  overflow-x:hidden;
 }
 
 button,
 input{
-    font:inherit;
+  font:inherit;
 }
 
 button{
-    border:0;
+  cursor:pointer;
 }
 
-button:focus-visible,
-input:focus-visible{
-    outline:2px solid var(--accent);
-    outline-offset:3px;
+.hidden{
+  display:none!important;
 }
 
+/* -----------------------------------------
+   LOGIN
+----------------------------------------- */
 
-/* SIDEBAR */
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(30,215,96,.08),
+      transparent 35%
+    ),
+    var(--bg);
+}
+
+.login-card{
+  width:100%;
+  max-width:430px;
+  padding:36px;
+  border:1px solid var(--border);
+  border-radius:24px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.045),
+      rgba(255,255,255,.015)
+    );
+  box-shadow:
+    0 30px 100px rgba(0,0,0,.55),
+    0 0 60px rgba(30,215,96,.04);
+  backdrop-filter:blur(20px);
+}
+
+.logo{
+  font-size:26px;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+.logo span{
+  color:var(--accent);
+}
+
+.login-subtitle{
+  color:var(--muted);
+  margin:8px 0 30px;
+  font-size:14px;
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+.field label{
+  display:block;
+  color:#aeb8b2;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+}
+
+.field input{
+  width:100%;
+  padding:14px 15px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  outline:none;
+  color:var(--text);
+  background:#090d0d;
+  transition:.2s;
+}
+
+.field input:focus{
+  border-color:rgba(30,215,96,.55);
+  box-shadow:0 0 0 4px rgba(30,215,96,.08);
+}
+
+.primary-btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  color:#001b08;
+  background:var(--accent);
+  font-weight:800;
+  transition:.2s;
+}
+
+.primary-btn:hover{
+  background:var(--accent-bright);
+  transform:translateY(-1px);
+}
+
+.error{
+  color:#ff7777;
+  font-size:13px;
+  margin-top:15px;
+  min-height:18px;
+}
+
+/* -----------------------------------------
+   APP
+----------------------------------------- */
+
+#app{
+  min-height:100vh;
+}
 
 .sidebar{
-    position:fixed;
-    inset:0 auto 0 0;
-
-    width:270px;
-
-    padding:32px 20px;
-
-    background:rgba(10,11,13,.78);
-
-    border-right:1px solid var(--border);
-
-    backdrop-filter:blur(28px);
-
-    z-index:20;
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  width:240px;
+  padding:25px 16px;
+  background:
+    linear-gradient(
+      180deg,
+      #080b0b,
+      #060808
+    );
+  border-right:1px solid var(--border);
+  z-index:10;
 }
 
 .brand{
-    display:flex;
-    align-items:center;
-
-    gap:14px;
-
-    padding:8px 10px 38px;
+  padding:0 10px;
+  margin-bottom:38px;
 }
 
-.brand-mark{
-    width:44px;
-    height:44px;
-
-    display:grid;
-    place-items:center;
-
-    border-radius:14px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #25e96d,
-            #10a346
-        );
-
-    color:#040d06;
-
-    font-size:22px;
-    font-weight:900;
-
-    box-shadow:
-        0 0 22px rgba(30,215,96,.35);
+.brand-title{
+  font-size:19px;
+  font-weight:800;
 }
 
-.brand-text{
-    font-size:18px;
-    font-weight:800;
-
-    background:
-        linear-gradient(
-            180deg,
-            #fff,
-            #c2c7cf
-        );
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+.brand-title span{
+  color:var(--accent);
 }
 
-.nav-heading{
-    padding:0 12px;
+.brand-small{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+}
 
-    margin-bottom:12px;
-
-    color:var(--muted2);
-
-    font-size:10px;
-    font-weight:800;
-
-    letter-spacing:1.8px;
-
-    text-transform:uppercase;
+.nav-title{
+  color:#58625d;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:10px;
+  font-weight:800;
+  padding:0 11px;
+  margin-bottom:8px;
 }
 
 .nav-item{
-    width:100%;
-
-    display:flex;
-    align-items:center;
-
-    gap:14px;
-
-    padding:14px 15px;
-
-    margin-bottom:6px;
-
-    border-radius:14px;
-
-    background:transparent;
-
-    color:var(--muted);
-
-    font-weight:600;
-
-    cursor:pointer;
-
-    text-align:left;
-
-    transition:.25s ease;
+  width:100%;
+  border:0;
+  color:#aab4ae;
+  background:transparent;
+  padding:12px 12px;
+  border-radius:10px;
+  text-align:left;
+  margin-bottom:4px;
 }
 
-.nav-item:hover{
-    background:rgba(255,255,255,.07);
-    color:#fff;
-    transform:translateX(4px);
+.nav-item:hover,
+.nav-item.active{
+  color:var(--text);
+  background:var(--accent-soft);
 }
 
 .nav-item.active{
-    background:
-        linear-gradient(
-            90deg,
-            var(--accent-soft),
-            rgba(30,215,96,.03)
-        );
-
-    color:var(--accent);
-
-    border-left:3px solid var(--accent);
+  box-shadow:
+    inset 2px 0 var(--accent);
 }
 
-.nav-icon{
-    width:22px;
-    text-align:center;
-
-    font-size:18px;
+.sidebar-bottom{
+  position:absolute;
+  left:16px;
+  right:16px;
+  bottom:20px;
 }
 
+.admin-badge{
+  padding:13px;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.025);
+  margin-bottom:10px;
+}
 
-/* MAIN */
+.admin-label{
+  color:#64706a;
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+.admin-name{
+  margin-top:4px;
+  font-weight:700;
+  font-size:13px;
+}
+
+.logout{
+  width:100%;
+  border:1px solid var(--border);
+  background:#0a0e0e;
+  color:#aeb7b1;
+  padding:11px;
+  border-radius:10px;
+}
+
+.logout:hover{
+  color:#fff;
+  border-color:rgba(255,92,92,.35);
+}
+
+/* -----------------------------------------
+   MAIN
+----------------------------------------- */
 
 .main{
-    margin-left:270px;
-
-    min-height:100vh;
-
-    padding:42px 48px 60px;
+  margin-left:240px;
+  padding:30px;
 }
 
 .topbar{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-
-    gap:30px;
-
-    margin-bottom:34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  margin-bottom:24px;
 }
 
 .eyebrow{
-    color:var(--accent);
-
-    margin-bottom:8px;
-
-    font-size:11px;
-    font-weight:800;
-
-    letter-spacing:2px;
-
-    text-transform:uppercase;
+  color:var(--accent);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:800;
+  margin-bottom:7px;
 }
 
 h1{
-    font-size:clamp(32px,4vw,48px);
-
-    line-height:1;
-
-    letter-spacing:-1.8px;
-
-    background:
-        linear-gradient(
-            180deg,
-            #fff 30%,
-            rgba(255,255,255,.68)
-        );
-
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
+  margin:0;
+  font-size:30px;
+  letter-spacing:-1px;
 }
 
 .subtitle{
-    margin-top:10px;
-
-    color:var(--muted);
-
-    font-size:14px;
+  color:var(--muted);
+  margin-top:6px;
+  font-size:13px;
 }
 
+.refresh-btn{
+  border:1px solid var(--border);
+  background:var(--panel);
+  color:#c4cdc8;
+  padding:10px 15px;
+  border-radius:10px;
+}
 
-/* USER SELECTOR */
+.refresh-btn:hover{
+  border-color:rgba(30,215,96,.3);
+  color:#fff;
+}
+
+/* -----------------------------------------
+   STATS
+----------------------------------------- */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  margin-bottom:20px;
+}
+
+.stat{
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.04),
+      rgba(255,255,255,.015)
+    );
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:18px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+
+.stat-value{
+  font-size:26px;
+  font-weight:800;
+  margin-top:5px;
+}
+
+/* -----------------------------------------
+   WORKSPACE
+----------------------------------------- */
 
 .workspace{
-    display:grid;
-
-    grid-template-columns:270px minmax(0,1fr);
-
-    gap:22px;
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:18px;
+  min-height:650px;
 }
 
 .panel{
-    border:1px solid var(--border);
-
-    border-radius:var(--radius);
-
-    background:
-        linear-gradient(
-            160deg,
-            rgba(255,255,255,.06),
-            rgba(255,255,255,.025)
-        );
-
-    backdrop-filter:blur(18px);
-
-    overflow:hidden;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255,255,255,.035),
+      rgba(255,255,255,.012)
+    );
+  overflow:hidden;
+  backdrop-filter:blur(15px);
 }
 
-.panel-header{
-    padding:20px;
-
-    border-bottom:1px solid var(--border);
+.panel-head{
+  padding:18px;
+  border-bottom:1px solid var(--border);
 }
 
 .panel-title{
-    font-size:16px;
-    font-weight:800;
+  font-size:14px;
+  font-weight:800;
 }
 
-.panel-subtitle{
-    margin-top:5px;
-
-    color:var(--muted);
-
-    font-size:12px;
-}
-
-
-/* USERS */
-
-.users{
-    padding:10px;
-}
-
-.user{
-    width:100%;
-
-    display:flex;
-    align-items:center;
-
-    gap:12px;
-
-    padding:13px;
-
-    margin-bottom:5px;
-
-    border-radius:13px;
-
-    background:transparent;
-
-    color:var(--muted);
-
-    text-align:left;
-
-    cursor:pointer;
-
-    transition:.2s ease;
-}
-
-.user:hover{
-    background:rgba(255,255,255,.06);
-    color:#fff;
-}
-
-.user.active{
-    background:var(--accent-soft);
-    color:var(--accent);
-}
-
-.user-avatar{
-    width:36px;
-    height:36px;
-
-    display:grid;
-    place-items:center;
-
-    flex-shrink:0;
-
-    border-radius:50%;
-
-    background:
-        linear-gradient(
-            135deg,
-            #24292d,
-            #111315
-        );
-
-    border:1px solid var(--border);
-
-    font-weight:800;
-}
-
-.user-info{
-    min-width:0;
-}
-
-.user-name{
-    overflow:hidden;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-
-    color:inherit;
-
-    font-size:13px;
-    font-weight:700;
-}
-
-.user-username{
-    margin-top:3px;
-
-    overflow:hidden;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-
-    color:var(--muted2);
-
-    font-size:11px;
-}
-
-
-/* SONG PANEL */
-
-.song-toolbar{
-    display:flex;
-    align-items:center;
-
-    gap:10px;
-
-    padding:16px 20px;
-
-    border-bottom:1px solid var(--border);
+.panel-desc{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
 }
 
 .search{
-    position:relative;
-
-    flex:1;
+  width:100%;
+  padding:11px 12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#090d0d;
+  color:#fff;
+  outline:none;
+  margin-top:13px;
 }
 
-.search input{
-    width:100%;
-
-    height:44px;
-
-    padding:0 15px 0 42px;
-
-    border:1px solid var(--border);
-
-    border-radius:13px;
-
-    background:rgba(255,255,255,.045);
-
-    color:#fff;
-
-    outline:none;
+.search:focus{
+  border-color:rgba(30,215,96,.45);
 }
 
-.search input:focus{
-    border-color:var(--accent);
-
-    box-shadow:
-        0 0 18px rgba(30,215,96,.12);
+.users{
+  max-height:570px;
+  overflow:auto;
+  padding:8px;
 }
 
-.search-icon{
-    position:absolute;
-
-    left:15px;
-    top:50%;
-
-    transform:translateY(-50%);
-
-    color:var(--muted);
-
-    pointer-events:none;
+.user{
+  width:100%;
+  border:1px solid transparent;
+  border-radius:12px;
+  padding:13px;
+  background:transparent;
+  color:var(--text);
+  text-align:left;
+  margin-bottom:5px;
 }
 
-.toolbar-button{
-    height:44px;
-
-    padding:0 15px;
-
-    border-radius:13px;
-
-    background:rgba(255,255,255,.06);
-
-    color:var(--muted);
-
-    border:1px solid var(--border);
-
-    cursor:pointer;
-
-    font-size:12px;
-    font-weight:700;
-
-    transition:.2s ease;
+.user:hover{
+  background:rgba(255,255,255,.035);
 }
 
-.toolbar-button:hover{
-    background:rgba(255,255,255,.1);
-    color:#fff;
+.user.selected{
+  background:var(--accent-soft);
+  border-color:rgba(30,215,96,.2);
 }
 
-.toolbar-button.primary{
-    background:var(--accent);
-
-    color:#061009;
-
-    border-color:var(--accent);
-
-    box-shadow:
-        0 8px 22px rgba(30,215,96,.2);
+.user-name{
+  font-size:13px;
+  font-weight:750;
 }
 
-.toolbar-button.primary:hover{
-    background:var(--accent-bright);
+.user-username{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px;
 }
 
+/* -----------------------------------------
+   SONG PANEL
+----------------------------------------- */
 
-/* COUNT */
-
-.song-status{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:15px 20px;
-
-    color:var(--muted);
-
-    font-size:12px;
-
-    border-bottom:1px solid var(--border);
+.song-panel{
+  display:flex;
+  flex-direction:column;
 }
 
-.selected-count{
-    color:var(--accent);
-
-    font-weight:800;
+.song-toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:15px 18px;
+  border-bottom:1px solid var(--border);
 }
 
+.song-toolbar .search{
+  margin:0;
+  flex:1;
+}
 
-/* SONGS */
+.small-btn{
+  white-space:nowrap;
+  border:1px solid var(--border);
+  background:#0a0e0e;
+  color:#aeb8b2;
+  border-radius:9px;
+  padding:10px 12px;
+}
+
+.small-btn:hover{
+  color:#fff;
+  border-color:rgba(30,215,96,.3);
+}
+
+.selected-user{
+  padding:15px 18px;
+  background:rgba(30,215,96,.035);
+  border-bottom:1px solid var(--border);
+}
+
+.selected-user-name{
+  font-size:15px;
+  font-weight:800;
+}
+
+.selected-user-meta{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px;
+}
 
 .song-list{
-    padding:10px;
-
-    max-height:620px;
-
-    overflow-y:auto;
+  flex:1;
+  overflow:auto;
+  padding:12px;
+  max-height:480px;
 }
 
 .song{
-    display:flex;
-    align-items:center;
-
-    gap:13px;
-
-    padding:12px;
-
-    margin-bottom:5px;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    transition:.18s ease;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:12px;
+  border-radius:11px;
+  margin-bottom:4px;
+  transition:.15s;
 }
 
 .song:hover{
-    background:rgba(255,255,255,.045);
+  background:rgba(255,255,255,.025);
 }
 
-.song.selected{
-    background:rgba(30,215,96,.08);
+.song input{
+  appearance:none;
+  width:19px;
+  height:19px;
+  flex:0 0 19px;
+  border-radius:6px;
+  border:1px solid #39433e;
+  background:#080c0c;
+  position:relative;
+  cursor:pointer;
 }
 
-.checkbox{
-    width:21px;
-    height:21px;
-
-    flex-shrink:0;
-
-    appearance:none;
-
-    border:1px solid rgba(255,255,255,.2);
-
-    border-radius:6px;
-
-    background:rgba(255,255,255,.03);
-
-    cursor:pointer;
-
-    position:relative;
+.song input:checked{
+  background:var(--accent);
+  border-color:var(--accent);
 }
 
-.checkbox:checked{
-    background:var(--accent);
-
-    border-color:var(--accent);
-}
-
-.checkbox:checked::after{
-    content:"✓";
-
-    position:absolute;
-
-    inset:0;
-
-    display:grid;
-    place-items:center;
-
-    color:#061009;
-
-    font-size:14px;
-    font-weight:900;
-}
-
-.song-art{
-    width:43px;
-    height:43px;
-
-    display:grid;
-    place-items:center;
-
-    flex-shrink:0;
-
-    border-radius:11px;
-
-    background:
-        radial-gradient(
-            circle at 25% 20%,
-            rgba(255,255,255,.15),
-            transparent 35%
-        ),
-        linear-gradient(
-            145deg,
-            #252a2e,
-            #0d0f11
-        );
-
-    color:var(--muted);
-
-    font-size:19px;
-}
-
-.song.selected .song-art{
-    color:var(--accent);
+.song input:checked::after{
+  content:"✓";
+  position:absolute;
+  color:#001b08;
+  font-size:13px;
+  font-weight:900;
+  left:3px;
+  top:-1px;
 }
 
 .song-info{
-    min-width:0;
-    flex:1;
+  min-width:0;
 }
 
 .song-title{
-    overflow:hidden;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-
-    font-size:13px;
-    font-weight:750;
+  font-size:13px;
+  font-weight:700;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .song-artist{
-    margin-top:3px;
-
-    overflow:hidden;
-
-    white-space:nowrap;
-    text-overflow:ellipsis;
-
-    color:var(--muted);
-
-    font-size:11px;
+  color:var(--muted);
+  font-size:11px;
+  margin-top:3px;
 }
 
-
-/* SAVE */
-
-.save-area{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    padding:18px 20px;
-
-    border-top:1px solid var(--border);
+.save-bar{
+  padding:15px 18px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  background:rgba(5,8,8,.8);
 }
 
-.current-user{
-    color:var(--muted);
-
-    font-size:12px;
+.selection-count{
+  color:var(--muted);
+  font-size:12px;
 }
 
-.current-user strong{
-    color:#fff;
+.selection-count strong{
+  color:var(--accent);
 }
 
+.save-btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 18px;
+  background:var(--accent);
+  color:#001b08;
+  font-weight:850;
+}
 
-/* TOAST */
+.save-btn:hover{
+  background:var(--accent-bright);
+}
+
+.save-btn:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+}
+
+/* -----------------------------------------
+   EMPTY
+----------------------------------------- */
+
+.empty{
+  color:#65706a;
+  text-align:center;
+  padding:50px 20px;
+  font-size:13px;
+}
+
+/* -----------------------------------------
+   TOAST
+----------------------------------------- */
 
 .toast{
-    position:fixed;
-
-    right:25px;
-    bottom:25px;
-
-    padding:14px 18px;
-
-    border:1px solid var(--border-light);
-
-    border-radius:14px;
-
-    background:rgba(18,20,24,.95);
-
-    backdrop-filter:blur(20px);
-
-    color:#fff;
-
-    font-size:13px;
-    font-weight:700;
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.5);
-
-    opacity:0;
-
-    transform:translateY(12px);
-
-    pointer-events:none;
-
-    transition:.25s ease;
-
-    z-index:100;
+  position:fixed;
+  right:25px;
+  bottom:25px;
+  padding:13px 17px;
+  border-radius:12px;
+  background:#111817;
+  border:1px solid rgba(30,215,96,.25);
+  box-shadow:0 15px 50px rgba(0,0,0,.5);
+  font-size:13px;
+  z-index:100;
+  transform:translateY(20px);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
 }
 
 .toast.show{
-    opacity:1;
-    transform:translateY(0);
-}
-
-.toast.success{
-    border-color:rgba(30,215,96,.35);
+  transform:translateY(0);
+  opacity:1;
 }
 
 .toast.error{
-    border-color:rgba(255,92,122,.4);
+  border-color:rgba(255,92,92,.3);
 }
 
-
-/* EMPTY */
-
-.empty{
-    padding:60px 20px;
-
-    text-align:center;
-
-    color:var(--muted);
-}
-
-.empty-icon{
-    font-size:32px;
-
-    color:var(--accent);
-
-    margin-bottom:10px;
-}
-
-.empty-title{
-    color:#fff;
-
-    font-weight:700;
-}
-
-.empty-text{
-    margin-top:5px;
-
-    font-size:12px;
-}
-
-
-/* LOADING */
-
-.loading{
-    padding:40px;
-
-    text-align:center;
-
-    color:var(--muted);
-
-    font-size:13px;
-}
-
-.spinner{
-    width:25px;
-    height:25px;
-
-    margin:0 auto 12px;
-
-    border:2px solid rgba(255,255,255,.1);
-
-    border-top-color:var(--accent);
-
-    border-radius:50%;
-
-    animation:spin .8s linear infinite;
-}
-
-@keyframes spin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-
-/* MOBILE */
+/* -----------------------------------------
+   MOBILE
+----------------------------------------- */
 
 @media(max-width:850px){
 
-    .sidebar{
-        display:none;
-    }
+  .sidebar{
+    position:static;
+    width:100%;
+    height:auto;
+    padding:16px;
+    border-right:0;
+    border-bottom:1px solid var(--border);
+  }
 
-    .main{
-        margin-left:0;
+  .brand{
+    margin-bottom:15px;
+  }
 
-        padding:28px 16px 40px;
-    }
+  .nav-title,
+  .sidebar-bottom{
+    display:none;
+  }
 
-    .topbar{
-        display:block;
-    }
+  .main{
+    margin-left:0;
+    padding:18px;
+  }
 
-    .workspace{
-        grid-template-columns:1fr;
-    }
+  .workspace{
+    grid-template-columns:1fr;
+  }
 
-    .user-panel{
-        max-height:280px;
-    }
+  .users{
+    max-height:300px;
+  }
 
-    .users{
-        display:flex;
+  .song-list{
+    max-height:450px;
+  }
 
-        gap:7px;
+  .stats{
+    grid-template-columns:1fr;
+  }
 
-        overflow-x:auto;
-    }
+  .topbar{
+    align-items:flex-start;
+    gap:12px;
+  }
 
-    .user{
-        width:auto;
+  h1{
+    font-size:24px;
+  }
+}
 
-        min-width:160px;
+@media(max-width:560px){
 
-        margin:0;
-    }
+  .song-toolbar{
+    flex-wrap:wrap;
+  }
 
-    .song-toolbar{
-        flex-wrap:wrap;
-    }
+  .song-toolbar .search{
+    width:100%;
+    flex-basis:100%;
+  }
 
-    .search{
-        flex-basis:100%;
-        order:-1;
-    }
+  .save-bar{
+    flex-direction:column;
+    align-items:stretch;
+  }
 
-    .song-list{
-        max-height:none;
-    }
+  .save-btn{
+    width:100%;
+  }
+
+  .login-card{
+    padding:25px;
+  }
 }
 </style>
-
 </head>
 
 <body>
 
-<aside class="sidebar">
+<!-- ==================================================
+     LOGIN
+================================================== -->
+
+<section id="loginScreen">
+
+  <div class="login-card">
+
+    <div class="logo">
+      Music- <span>Optima M3</span>
+    </div>
+
+    <div class="login-subtitle">
+      Administrator console
+    </div>
+
+    <form id="loginForm">
+
+      <div class="field">
+        <label>Username</label>
+        <input
+          id="loginUsername"
+          type="text"
+          autocomplete="username"
+          required
+        >
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+
+      <button
+        id="loginButton"
+        class="primary-btn"
+        type="submit"
+      >
+        Sign in
+      </button>
+
+      <div
+        id="loginError"
+        class="error"
+      ></div>
+
+    </form>
+
+  </div>
+
+</section>
+
+
+<!-- ==================================================
+     APPLICATION
+================================================== -->
+
+<div
+  id="app"
+  class="hidden"
+>
+
+  <aside class="sidebar">
 
     <div class="brand">
-        <div class="brand-mark">♪</div>
-        <div class="brand-text">Music- Optima M3</div>
-    </div>
 
-    <div class="nav-heading">
+      <div class="brand-title">
+        Music- <span>Optima M3</span>
+      </div>
+
+      <div class="brand-small">
         Administration
+      </div>
+
     </div>
 
-    <button class="nav-item active">
-        <span class="nav-icon">♫</span>
-        <span>Song Assignments</span>
+    <div class="nav-title">
+      Management
+    </div>
+
+    <button
+      class="nav-item active"
+    >
+      Assignments
     </button>
 
-</aside>
+    <button
+      id="refreshNav"
+      class="nav-item"
+    >
+      Refresh data
+    </button>
+
+    <div class="sidebar-bottom">
+
+      <div class="admin-badge">
+
+        <div class="admin-label">
+          Signed in as
+        </div>
+
+        <div
+          id="adminName"
+          class="admin-name"
+        >
+          Admin
+        </div>
+
+      </div>
+
+      <button
+        id="logoutButton"
+        class="logout"
+      >
+        Log out
+      </button>
+
+    </div>
+
+  </aside>
 
 
-<main class="main">
+  <main class="main">
 
     <div class="topbar">
 
-        <div>
+      <div>
 
-            <div class="eyebrow">
-                PMSECURITY • MUSIC ADMIN
-            </div>
-
-            <h1>
-                Manage Library
-            </h1>
-
-            <p class="subtitle">
-                Assign songs to individual users.
-            </p>
-
+        <div class="eyebrow">
+          Admin Console
         </div>
+
+        <h1>
+          Song assignments
+        </h1>
+
+        <div class="subtitle">
+          Choose a user and assign multiple songs.
+        </div>
+
+      </div>
+
+      <button
+        id="refreshButton"
+        class="refresh-btn"
+      >
+        ↻ Refresh
+      </button>
 
     </div>
 
 
-    <section class="workspace">
+    <!-- STATS -->
+
+    <div class="stats">
+
+      <div class="stat">
+        <div class="stat-label">
+          Users
+        </div>
+
+        <div
+          id="userCount"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Songs
+        </div>
+
+        <div
+          id="songCount"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">
+          Selected
+        </div>
+
+        <div
+          id="selectedCount"
+          class="stat-value"
+        >
+          0
+        </div>
+      </div>
+
+    </div>
 
 
-        <!-- USERS -->
+    <!-- WORKSPACE -->
 
-        <div class="panel user-panel">
+    <div class="workspace">
 
-            <div class="panel-header">
+      <!-- USERS -->
 
-                <div class="panel-title">
-                    Users
-                </div>
+      <section class="panel">
 
-                <div class="panel-subtitle">
-                    Select a user to manage
-                    their library.
-                </div>
+        <div class="panel-head">
 
-            </div>
+          <div class="panel-title">
+            Users
+          </div>
 
-            <div class="users" id="users">
+          <div class="panel-desc">
+            Select a user to manage their library.
+          </div>
 
-                <div class="loading">
+          <input
+            id="userSearch"
+            class="search"
+            type="search"
+            placeholder="Search users..."
+          >
 
-                    <div class="spinner"></div>
+        </div>
 
-                    Loading users...
+        <div
+          id="usersList"
+          class="users"
+        >
 
-                </div>
+          <div class="empty">
+            Loading users...
+          </div>
 
-            </div>
+        </div>
+
+      </section>
+
+
+      <!-- SONGS -->
+
+      <section class="panel song-panel">
+
+        <div class="selected-user">
+
+          <div
+            id="selectedUserName"
+            class="selected-user-name"
+          >
+            Select a user
+          </div>
+
+          <div
+            id="selectedUserMeta"
+            class="selected-user-meta"
+          >
+            Choose a user from the left.
+          </div>
 
         </div>
 
 
-        <!-- SONGS -->
+        <div class="song-toolbar">
 
-        <div class="panel">
+          <input
+            id="songSearch"
+            class="search"
+            type="search"
+            placeholder="Search songs..."
+          >
 
-            <div class="panel-header">
+          <button
+            id="selectAll"
+            class="small-btn"
+          >
+            Select all
+          </button>
 
-                <div class="panel-title" id="assignmentTitle">
-                    Select a user
-                </div>
-
-                <div class="panel-subtitle" id="assignmentSubtitle">
-                    Choose a user from the left.
-                </div>
-
-            </div>
-
-
-            <div class="song-toolbar">
-
-                <div class="search">
-
-                    <span class="search-icon">
-                        ⌕
-                    </span>
-
-                    <input
-                        id="search"
-                        type="search"
-                        placeholder="Search songs..."
-                        autocomplete="off"
-                    >
-
-                </div>
-
-                <button
-                    class="toolbar-button"
-                    id="selectAll"
-                >
-                    Select all
-                </button>
-
-                <button
-                    class="toolbar-button"
-                    id="clearAll"
-                >
-                    Clear
-                </button>
-
-            </div>
-
-
-            <div class="song-status">
-
-                <span>
-                    Showing
-                    <strong id="visibleCount">0</strong>
-                    songs
-                </span>
-
-                <span class="selected-count">
-                    <span id="selectedCount">0</span>
-                    selected
-                </span>
-
-            </div>
-
-
-            <div
-                class="song-list"
-                id="songList"
-            >
-
-                <div class="empty">
-
-                    <div class="empty-icon">
-                        ♫
-                    </div>
-
-                    <div class="empty-title">
-                        No user selected
-                    </div>
-
-                    <div class="empty-text">
-                        Select a user to manage
-                        their songs.
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <div class="save-area">
-
-                <div
-                    class="current-user"
-                    id="currentUser"
-                >
-                    No user selected
-                </div>
-
-                <button
-                    class="toolbar-button primary"
-                    id="saveButton"
-                >
-                    Save assignments
-                </button>
-
-            </div>
+          <button
+            id="clearAll"
+            class="small-btn"
+          >
+            Clear
+          </button>
 
         </div>
 
-    </section>
 
-</main>
+        <div
+          id="songsList"
+          class="song-list"
+        >
+
+          <div class="empty">
+            Select a user first.
+          </div>
+
+        </div>
+
+
+        <div class="save-bar">
+
+          <div
+            id="selectionText"
+            class="selection-count"
+          >
+            <strong>0</strong> songs selected
+          </div>
+
+          <button
+            id="saveButton"
+            class="save-btn"
+            disabled
+          >
+            Save assignments
+          </button>
+
+        </div>
+
+      </section>
+
+    </div>
+
+  </main>
+
+</div>
 
 
 <div
-    class="toast"
-    id="toast"
+  id="toast"
+  class="toast"
 ></div>
 
 
 <script>
+/* ==================================================
+   CONFIG
+================================================== */
 
-const API =
-    "https://lzwchczsbbzspakwuafx.supabase.co/functions/v1/admin-song-assignments";
+const SUPABASE_FUNCTIONS =
+  "https://lzwchczsbbzspakwuafx.supabase.co/functions/v1";
 
+const LOGIN_URL =
+  `${SUPABASE_FUNCTIONS}/portal-login`;
+
+const ADMIN_URL =
+  `${SUPABASE_FUNCTIONS}/admin-music`;
+
+
+/* ==================================================
+   STATE
+================================================== */
+
+let sessionToken =
+  sessionStorage.getItem(
+    "admin_session_token"
+  );
 
 let users = [];
-
 let songs = [];
 
 let selectedUser = null;
+let selectedSongIds = new Set();
 
-let assignedSongIds = new Set();
+let userSearchText = "";
+let songSearchText = "";
 
-let visibleSongIds = [];
 
+/* ==================================================
+   ELEMENTS
+================================================== */
 
-const usersEl =
-    document.getElementById("users");
+const loginScreen =
+  document.getElementById(
+    "loginScreen"
+  );
 
-const songList =
-    document.getElementById("songList");
+const app =
+  document.getElementById("app");
 
-const search =
-    document.getElementById("search");
+const loginForm =
+  document.getElementById(
+    "loginForm"
+  );
+
+const loginUsername =
+  document.getElementById(
+    "loginUsername"
+  );
+
+const loginPassword =
+  document.getElementById(
+    "loginPassword"
+  );
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+const loginError =
+  document.getElementById(
+    "loginError"
+  );
+
+const usersList =
+  document.getElementById(
+    "usersList"
+  );
+
+const songsList =
+  document.getElementById(
+    "songsList"
+  );
+
+const userSearch =
+  document.getElementById(
+    "userSearch"
+  );
+
+const songSearch =
+  document.getElementById(
+    "songSearch"
+  );
+
+const selectedUserName =
+  document.getElementById(
+    "selectedUserName"
+  );
+
+const selectedUserMeta =
+  document.getElementById(
+    "selectedUserMeta"
+  );
 
 const selectedCount =
-    document.getElementById("selectedCount");
+  document.getElementById(
+    "selectedCount"
+  );
 
-const visibleCount =
-    document.getElementById("visibleCount");
+const selectionText =
+  document.getElementById(
+    "selectionText"
+  );
 
-const assignmentTitle =
-    document.getElementById("assignmentTitle");
+const saveButton =
+  document.getElementById(
+    "saveButton"
+  );
 
-const assignmentSubtitle =
-    document.getElementById("assignmentSubtitle");
+const userCount =
+  document.getElementById(
+    "userCount"
+  );
 
-const currentUser =
-    document.getElementById("currentUser");
+const songCount =
+  document.getElementById(
+    "songCount"
+  );
+
+const adminName =
+  document.getElementById(
+    "adminName"
+  );
 
 const toast =
-    document.getElementById("toast");
+  document.getElementById(
+    "toast"
+  );
 
 
-/* TOAST */
+/* ==================================================
+   TOAST
+================================================== */
 
-function showToast(message, type = "success") {
+let toastTimer;
 
-    toast.textContent = message;
+function showToast(
+  message,
+  isError = false
+) {
+  clearTimeout(toastTimer);
 
-    toast.className =
-        `toast show ${type}`;
+  toast.textContent = message;
 
+  toast.classList.toggle(
+    "error",
+    isError
+  );
+
+  toast.classList.add("show");
+
+  toastTimer =
     setTimeout(() => {
-
-        toast.className = "toast";
-
+      toast.classList.remove(
+        "show"
+      );
     }, 3000);
 }
 
 
-/* LOAD DATA */
+/* ==================================================
+   API
+================================================== */
 
-async function loadData() {
+async function adminFetch(
+  url,
+  options = {}
+) {
+  if (!sessionToken) {
+    throw new Error(
+      "No admin session. Please log in."
+    );
+  }
+
+  const headers = {
+    ...(options.headers || {}),
+    "Authorization":
+      `Bearer ${sessionToken}`,
+    "Content-Type":
+      "application/json"
+  };
+
+  const response =
+    await fetch(
+      url,
+      {
+        ...options,
+        headers
+      }
+    );
+
+  let data;
+
+  try {
+    data =
+      await response.json();
+  } catch {
+    data = {
+      success: false,
+      error:
+        "Invalid server response"
+    };
+  }
+
+  // Session is invalid/expired
+  if (
+    response.status === 401
+  ) {
+    sessionStorage.removeItem(
+      "admin_session_token"
+    );
+
+    sessionToken = null;
+
+    showLogin();
+
+    throw new Error(
+      data.error ||
+      "Session expired. Please log in again."
+    );
+  }
+
+  if (
+    !response.ok ||
+    data.success === false
+  ) {
+    throw new Error(
+      data.error ||
+      "Request failed"
+    );
+  }
+
+  return data;
+}
+
+
+/* ==================================================
+   LOGIN
+================================================== */
+
+loginForm.addEventListener(
+  "submit",
+  async (event) => {
+
+    event.preventDefault();
+
+    loginError.textContent = "";
+
+    const username =
+      loginUsername.value.trim();
+
+    const password =
+      loginPassword.value;
+
+    if (
+      !username ||
+      !password
+    ) {
+      return;
+    }
+
+    loginButton.disabled = true;
+    loginButton.textContent =
+      "Signing in...";
 
     try {
 
-        usersEl.innerHTML = `
-            <div class="loading">
-                <div class="spinner"></div>
-                Loading users...
-            </div>
-        `;
+      /*
+       * IMPORTANT:
+       * We use your existing portal-login
+       * function here.
+       */
 
-        const response =
-            await fetch(API);
+      const response =
+        await fetch(
+          LOGIN_URL,
+          {
+            method: "POST",
 
-        const data =
-            await response.json();
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
 
-        if (!response.ok || !data.success) {
+            body:
+              JSON.stringify({
+                username,
+                password
+              })
+          }
+        );
 
-            throw new Error(
-                data.error ||
-                "Failed to load data"
-            );
+      let data;
 
-        }
+      try {
+        data =
+          await response.json();
+      } catch {
+        data = {
+          success: false,
+          error:
+            "Invalid login response"
+        };
+      }
 
-        users =
-            data.users || [];
+      if (
+        !response.ok ||
+        !data.success ||
+        !data.token
+      ) {
+        throw new Error(
+          data.error ||
+          "Invalid username or password"
+        );
+      }
 
-        songs =
-            data.songs || [];
+      /*
+       * THIS IS THE IMPORTANT FIX.
+       *
+       * Save the token returned by
+       * portal-login.
+       */
 
-        renderUsers();
+      sessionToken =
+        data.token;
 
-        if (users.length) {
+      sessionStorage.setItem(
+        "admin_session_token",
+        sessionToken
+      );
 
-            selectUser(users[0]);
+      /*
+       * Now ask admin-music whether
+       * this account is actually an admin.
+       */
 
-        } else {
+      const me =
+        await adminFetch(
+          `${ADMIN_URL}?action=me`
+        );
 
-            renderNoUsers();
+      adminName.textContent =
+        me.admin?.name ||
+        me.admin?.username ||
+        username;
 
-        }
+      showApp();
+
+      await loadAll();
 
     } catch (error) {
 
-        console.error(error);
-
-        usersEl.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">!</div>
-                <div class="empty-title">
-                    Failed to load
-                </div>
-                <div class="empty-text">
-                    ${escapeHTML(error.message)}
-                </div>
-            </div>
-        `;
-
-        showToast(
-            error.message,
-            "error"
-        );
-
-    }
-
-}
-
-
-/* USERS */
-
-function renderUsers() {
-
-    usersEl.innerHTML = "";
-
-    users.forEach(user => {
-
-        const button =
-            document.createElement("button");
-
-        button.className =
-            "user";
-
-        if (
-            selectedUser &&
-            selectedUser.id === user.id
-        ) {
-            button.classList.add("active");
-        }
-
-        const initial =
-            (
-                user.name ||
-                user.username ||
-                "?"
-            )
-            .charAt(0)
-            .toUpperCase();
-
-        button.innerHTML = `
-            <div class="user-avatar">
-                ${escapeHTML(initial)}
-            </div>
-
-            <div class="user-info">
-
-                <div class="user-name">
-                    ${escapeHTML(
-                        user.name ||
-                        user.username
-                    )}
-                </div>
-
-                <div class="user-username">
-                    @${escapeHTML(
-                        user.username
-                    )}
-                </div>
-
-            </div>
-        `;
-
-        button.addEventListener(
-            "click",
-            () => selectUser(user)
-        );
-
-        usersEl.appendChild(button);
-
-    });
-
-}
-
-
-/* SELECT USER */
-
-async function selectUser(user) {
-
-    selectedUser = user;
-
-    renderUsers();
-
-    assignmentTitle.textContent =
-        `Assign songs to ${
-            user.name ||
-            user.username
-        }`;
-
-    assignmentSubtitle.textContent =
-        `@${user.username}`;
-
-    currentUser.innerHTML =
-        `Editing: <strong>${
-            escapeHTML(
-                user.name ||
-                user.username
-            )
-        }</strong>`;
-
-    songList.innerHTML = `
-        <div class="loading">
-            <div class="spinner"></div>
-            Loading assignments...
-        </div>
-    `;
-
-    try {
-
-        /*
-         * The GET endpoint currently returns
-         * users + songs.
-
-         * We need the selected user's
-         * existing assignments.
-         */
-
-        const response =
-            await fetch(
-                `${API}?user_id=${encodeURIComponent(user.id)}`
-            );
-
-        const data =
-            await response.json();
-
-        if (
-            response.ok &&
-            data.success &&
-            Array.isArray(data.assigned_song_ids)
-        ) {
-
-            assignedSongIds =
-                new Set(
-                    data.assigned_song_ids
-                        .map(Number)
-                );
-
-        } else {
-
-            /*
-             * Fallback for the current
-             * function version.
-             *
-             * We'll use the dedicated
-             * assignments endpoint
-             * below.
-             */
-
-            const assignmentResponse =
-                await fetch(
-                    `${API}/user/${user.id}`
-                );
-
-            if (
-                assignmentResponse.ok
-            ) {
-
-                const assignmentData =
-                    await assignmentResponse.json();
-
-                assignedSongIds =
-                    new Set(
-                        (
-                            assignmentData
-                                .song_ids ||
-                            []
-                        ).map(Number)
-                    );
-
-            } else {
-
-                assignedSongIds =
-                    new Set();
-
-            }
-
-        }
-
-        renderSongs();
-
-    } catch (error) {
-
-        console.error(error);
-
-        /*
-         * If assignment loading fails,
-         * start empty rather than corrupting
-         * existing data.
-         */
-
-        assignedSongIds =
-            new Set();
-
-        renderSongs();
-
-        showToast(
-            "Could not load existing assignments",
-            "error"
-        );
-
-    }
-
-}
-
-
-/* RENDER SONGS */
-
-function renderSongs() {
-
-    const query =
-        search.value
-            .trim()
-            .toLowerCase();
-
-    const filtered =
-        songs.filter(song => {
-
-            if (!query) {
-                return true;
-            }
-
-            const title =
-                String(song.title || "")
-                    .toLowerCase();
-
-            const artist =
-                String(song.artist || "")
-                    .toLowerCase();
-
-            return (
-                title.includes(query) ||
-                artist.includes(query)
-            );
-
-        });
-
-    visibleSongIds =
-        filtered.map(song => song.id);
-
-    visibleCount.textContent =
-        filtered.length;
-
-    updateSelectedCount();
-
-    songList.innerHTML = "";
-
-    if (!selectedUser) {
-
-        songList.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">♫</div>
-                <div class="empty-title">
-                    No user selected
-                </div>
-                <div class="empty-text">
-                    Select a user first.
-                </div>
-            </div>
-        `;
-
-        return;
-
-    }
-
-    if (!filtered.length) {
-
-        songList.innerHTML = `
-            <div class="empty">
-                <div class="empty-icon">⌕</div>
-                <div class="empty-title">
-                    No songs found
-                </div>
-                <div class="empty-text">
-                    Try another search.
-                </div>
-            </div>
-        `;
-
-        return;
-
-    }
-
-    filtered.forEach(song => {
-
-        const row =
-            document.createElement("div");
-
-        const selected =
-            assignedSongIds.has(
-                Number(song.id)
-            );
-
-        row.className =
-            `song${selected ? " selected" : ""}`;
-
-        const checkbox =
-            document.createElement("input");
-
-        checkbox.type = "checkbox";
-
-        checkbox.className =
-            "checkbox";
-
-        checkbox.checked =
-            selected;
-
-        const art =
-            document.createElement("div");
-
-        art.className =
-            "song-art";
-
-        art.textContent = "♪";
-
-        const info =
-            document.createElement("div");
-
-        info.className =
-            "song-info";
-
-        const title =
-            document.createElement("div");
-
-        title.className =
-            "song-title";
-
-        title.textContent =
-            song.title || "Untitled";
-
-        const artist =
-            document.createElement("div");
-
-        artist.className =
-            "song-artist";
-
-        artist.textContent =
-            song.artist || "Unknown artist";
-
-        info.appendChild(title);
-
-        info.appendChild(artist);
-
-        row.appendChild(checkbox);
-
-        row.appendChild(art);
-
-        row.appendChild(info);
-
-        function toggle() {
-
-            const id =
-                Number(song.id);
-
-            if (
-                assignedSongIds.has(id)
-            ) {
-
-                assignedSongIds.delete(id);
-
-                row.classList.remove(
-                    "selected"
-                );
-
-                checkbox.checked = false;
-
-            } else {
-
-                assignedSongIds.add(id);
-
-                row.classList.add(
-                    "selected"
-                );
-
-                checkbox.checked = true;
-
-            }
-
-            updateSelectedCount();
-
-        }
-
-        checkbox.addEventListener(
-            "change",
-            event => {
-
-                event.stopPropagation();
-
-                const id =
-                    Number(song.id);
-
-                if (checkbox.checked) {
-
-                    assignedSongIds.add(id);
-
-                    row.classList.add(
-                        "selected"
-                    );
-
-                } else {
-
-                    assignedSongIds.delete(id);
-
-                    row.classList.remove(
-                        "selected"
-                    );
-
-                }
-
-                updateSelectedCount();
-
-            }
-        );
-
-        row.addEventListener(
-            "click",
-            event => {
-
-                if (
-                    event.target !== checkbox
-                ) {
-                    toggle();
-                }
-
-            }
-        );
-
-        songList.appendChild(row);
-
-    });
-
-}
-
-
-/* SELECTED COUNT */
-
-function updateSelectedCount() {
-
-    selectedCount.textContent =
-        assignedSongIds.size;
-
-}
-
-
-/* SEARCH */
-
-search.addEventListener(
-    "input",
-    renderSongs
-);
-
-
-/* SELECT ALL */
-
-document
-    .getElementById("selectAll")
-    .addEventListener(
-        "click",
-        () => {
-
-            if (!selectedUser) {
-
-                showToast(
-                    "Select a user first",
-                    "error"
-                );
-
-                return;
-            }
-
-            visibleSongIds.forEach(id => {
-
-                assignedSongIds.add(
-                    Number(id)
-                );
-
-            });
-
-            renderSongs();
-
-        }
-    );
-
-
-/* CLEAR */
-
-document
-    .getElementById("clearAll")
-    .addEventListener(
-        "click",
-        () => {
-
-            if (!selectedUser) {
-
-                showToast(
-                    "Select a user first",
-                    "error"
-                );
-
-                return;
-            }
-
-            visibleSongIds.forEach(id => {
-
-                assignedSongIds.delete(
-                    Number(id)
-                );
-
-            });
-
-            renderSongs();
-
-        }
-    );
-
-
-/* SAVE */
-
-document
-    .getElementById("saveButton")
-    .addEventListener(
-        "click",
-        saveAssignments
-    );
-
-
-async function saveAssignments() {
-
-    if (!selectedUser) {
-
-        showToast(
-            "Select a user first",
-            "error"
-        );
-
-        return;
-    }
-
-    const button =
-        document.getElementById(
-            "saveButton"
-        );
-
-    const original =
-        button.textContent;
-
-    button.disabled = true;
-
-    button.textContent =
-        "Saving...";
-
-    try {
-
-        const response =
-            await fetch(
-                API,
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:JSON.stringify({
-
-                        user_id:
-                            selectedUser.id,
-
-                        song_ids:
-                            Array.from(
-                                assignedSongIds
-                            )
-
-                    })
-
-                }
-            );
-
-        const data =
-            await response.json();
-
-        if (
-            !response.ok ||
-            !data.success
-        ) {
-
-            throw new Error(
-                data.error ||
-                "Failed to save"
-            );
-
-        }
-
-        showToast(
-            `Saved ${data.count} song${
-                data.count === 1
-                    ? ""
-                    : "s"
-            } for ${
-                selectedUser.name ||
-                selectedUser.username
-            }`
-        );
-
-    } catch (error) {
-
-        console.error(error);
-
-        showToast(
-            error.message,
-            "error"
-        );
+      console.error(
+        "Login error:",
+        error
+      );
+
+      loginError.textContent =
+        error.message ||
+        "Login failed";
+
+      sessionStorage.removeItem(
+        "admin_session_token"
+      );
+
+      sessionToken = null;
 
     } finally {
 
-        button.disabled = false;
+      loginButton.disabled =
+        false;
 
-        button.textContent =
-            original;
+      loginButton.textContent =
+        "Sign in";
+    }
+  }
+);
+
+
+/* ==================================================
+   LOAD ALL
+================================================== */
+
+async function loadAll() {
+
+  try {
+
+    const [
+      usersData,
+      songsData
+    ] = await Promise.all([
+      adminFetch(
+        `${ADMIN_URL}?action=users`
+      ),
+      adminFetch(
+        `${ADMIN_URL}?action=songs`
+      )
+    ]);
+
+    users =
+      usersData.users || [];
+
+    songs =
+      songsData.songs || [];
+
+    userCount.textContent =
+      users.length;
+
+    songCount.textContent =
+      songs.length;
+
+    renderUsers();
+
+    if (selectedUser) {
+
+      const stillExists =
+        users.find(
+          user =>
+            Number(user.id) ===
+            Number(selectedUser.id)
+        );
+
+      if (stillExists) {
+        selectedUser =
+          stillExists;
+
+        await loadAssignments(
+          selectedUser.id
+        );
+      } else {
+        selectedUser = null;
+        selectedSongIds.clear();
+        renderSelectedUser();
+        renderSongs();
+      }
 
     }
 
+  } catch (error) {
+
+    console.error(
+      "Load error:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "Failed to load data",
+      true
+    );
+  }
 }
 
 
-/* ESCAPE HTML */
+/* ==================================================
+   USERS
+================================================== */
 
-function escapeHTML(value) {
+function renderUsers() {
 
-    const div =
-        document.createElement("div");
+  const query =
+    userSearchText
+      .toLowerCase()
+      .trim();
 
-    div.textContent =
-        String(value ?? "");
+  const filtered =
+    users.filter(user => {
 
-    return div.innerHTML;
+      const username =
+        String(
+          user.username || ""
+        ).toLowerCase();
 
+      const name =
+        String(
+          user.name || ""
+        ).toLowerCase();
+
+      return (
+        !query ||
+        username.includes(query) ||
+        name.includes(query)
+      );
+    });
+
+  usersList.innerHTML = "";
+
+  if (!filtered.length) {
+
+    usersList.innerHTML =
+      `<div class="empty">
+        No users found.
+      </div>`;
+
+    return;
+  }
+
+  filtered.forEach(user => {
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+    button.className =
+      "user";
+
+    if (
+      selectedUser &&
+      Number(selectedUser.id) ===
+      Number(user.id)
+    ) {
+      button.classList.add(
+        "selected"
+      );
+    }
+
+    const name =
+      document.createElement(
+        "div"
+      );
+
+    name.className =
+      "user-name";
+
+    name.textContent =
+      user.name ||
+      user.username;
+
+    const username =
+      document.createElement(
+        "div"
+      );
+
+    username.className =
+      "user-username";
+
+    username.textContent =
+      `@${user.username}`;
+
+    button.appendChild(name);
+    button.appendChild(username);
+
+    button.addEventListener(
+      "click",
+      () => {
+        selectUser(user);
+      }
+    );
+
+    usersList.appendChild(
+      button
+    );
+  });
 }
 
 
-/* INITIAL */
+/* ==================================================
+   SELECT USER
+================================================== */
 
-loadData();
+async function selectUser(
+  user
+) {
+
+  selectedUser = user;
+
+  selectedSongIds.clear();
+
+  renderUsers();
+  renderSelectedUser();
+  renderSongs();
+
+  saveButton.disabled = true;
+
+  try {
+
+    await loadAssignments(
+      user.id
+    );
+
+  } catch (error) {
+
+    showToast(
+      error.message ||
+      "Failed to load assignments",
+      true
+    );
+  }
+}
+
+
+/* ==================================================
+   LOAD ASSIGNMENTS
+================================================== */
+
+async function loadAssignments(
+  userId
+) {
+
+  const data =
+    await adminFetch(
+      `${ADMIN_URL}?action=assignments&user_id=${encodeURIComponent(userId)}`
+    );
+
+  selectedSongIds =
+    new Set(
+      (data.song_ids || [])
+        .map(id => Number(id))
+    );
+
+  renderSelectedUser();
+  renderSongs();
+  updateSelectionCount();
+
+  saveButton.disabled = false;
+}
+
+
+/* ==================================================
+   SELECTED USER
+================================================== */
+
+function renderSelectedUser() {
+
+  if (!selectedUser) {
+
+    selectedUserName.textContent =
+      "Select a user";
+
+    selectedUserMeta.textContent =
+      "Choose a user from the left.";
+
+    return;
+  }
+
+  selectedUserName.textContent =
+    selectedUser.name ||
+    selectedUser.username;
+
+  selectedUserMeta.textContent =
+    `@${selectedUser.username} · ${selectedSongIds.size} assigned`;
+}
+
+
+/* ==================================================
+   SONGS
+================================================== */
+
+function renderSongs() {
+
+  songsList.innerHTML = "";
+
+  if (!selectedUser) {
+
+    songsList.innerHTML =
+      `<div class="empty">
+        Select a user first.
+      </div>`;
+
+    return;
+  }
+
+  const query =
+    songSearchText
+      .toLowerCase()
+      .trim();
+
+  const filtered =
+    songs.filter(song => {
+
+      const title =
+        String(
+          song.title || ""
+        ).toLowerCase();
+
+      const artist =
+        String(
+          song.artist || ""
+        ).toLowerCase();
+
+      return (
+        !query ||
+        title.includes(query) ||
+        artist.includes(query)
+      );
+    });
+
+  if (!filtered.length) {
+
+    songsList.innerHTML =
+      `<div class="empty">
+        No songs found.
+      </div>`;
+
+    return;
+  }
+
+  filtered.forEach(song => {
+
+    const row =
+      document.createElement(
+        "label"
+      );
+
+    row.className =
+      "song";
+
+    const checkbox =
+      document.createElement(
+        "input"
+      );
+
+    checkbox.type =
+      "checkbox";
+
+    checkbox.checked =
+      selectedSongIds.has(
+        Number(song.id)
+      );
+
+    checkbox.addEventListener(
+      "change",
+      () => {
+
+        const id =
+          Number(song.id);
+
+        if (
+          checkbox.checked
+        ) {
+          selectedSongIds.add(id);
+        } else {
+          selectedSongIds.delete(id);
+        }
+
+        updateSelectionCount();
+        renderSelectedUser();
+      }
+    );
+
+    const info =
+      document.createElement(
+        "div"
+      );
+
+    info.className =
+      "song-info";
+
+    const title =
+      document.createElement(
+        "div"
+      );
+
+    title.className =
+      "song-title";
+
+    title.textContent =
+      song.title ||
+      "Untitled";
+
+    const artist =
+      document.createElement(
+        "div"
+      );
+
+    artist.className =
+      "song-artist";
+
+    artist.textContent =
+      song.artist ||
+      "Unknown artist";
+
+    info.appendChild(title);
+    info.appendChild(artist);
+
+    row.appendChild(
+      checkbox
+    );
+
+    row.appendChild(
+      info
+    );
+
+    songsList.appendChild(
+      row
+    );
+  });
+}
+
+
+/* ==================================================
+   SELECTION COUNT
+================================================== */
+
+function updateSelectionCount() {
+
+  const count =
+    selectedSongIds.size;
+
+  selectedCount.textContent =
+    count;
+
+  selectionText.innerHTML =
+    `<strong>${count}</strong> songs selected`;
+
+  if (selectedUser) {
+    selectedUserMeta.textContent =
+      `@${selectedUser.username} · ${count} assigned`;
+  }
+}
+
+
+/* ==================================================
+   SELECT ALL
+================================================== */
+
+document
+  .getElementById("selectAll")
+  .addEventListener(
+    "click",
+    () => {
+
+      if (!selectedUser) {
+        showToast(
+          "Select a user first",
+          true
+        );
+        return;
+      }
+
+      const query =
+        songSearchText
+          .toLowerCase()
+          .trim();
+
+      songs
+        .filter(song => {
+
+          const title =
+            String(
+              song.title || ""
+            ).toLowerCase();
+
+          const artist =
+            String(
+              song.artist || ""
+            ).toLowerCase();
+
+          return (
+            !query ||
+            title.includes(query) ||
+            artist.includes(query)
+          );
+        })
+        .forEach(song => {
+          selectedSongIds.add(
+            Number(song.id)
+          );
+        });
+
+      renderSongs();
+      updateSelectionCount();
+    }
+  );
+
+
+/* ==================================================
+   CLEAR ALL
+================================================== */
+
+document
+  .getElementById("clearAll")
+  .addEventListener(
+    "click",
+    () => {
+
+      if (!selectedUser) {
+        showToast(
+          "Select a user first",
+          true
+        );
+        return;
+      }
+
+      const query =
+        songSearchText
+          .toLowerCase()
+          .trim();
+
+      songs
+        .filter(song => {
+
+          const title =
+            String(
+              song.title || ""
+            ).toLowerCase();
+
+          const artist =
+            String(
+              song.artist || ""
+            ).toLowerCase();
+
+          return (
+            !query ||
+            title.includes(query) ||
+            artist.includes(query)
+          );
+        })
+        .forEach(song => {
+          selectedSongIds.delete(
+            Number(song.id)
+          );
+        });
+
+      renderSongs();
+      updateSelectionCount();
+    }
+  );
+
+
+/* ==================================================
+   SAVE
+================================================== */
+
+saveButton.addEventListener(
+  "click",
+  async () => {
+
+    if (!selectedUser) {
+      showToast(
+        "Select a user first",
+        true
+      );
+      return;
+    }
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      "Saving...";
+
+    try {
+
+      const data =
+        await adminFetch(
+          ADMIN_URL,
+          {
+            method: "POST",
+
+            body:
+              JSON.stringify({
+                action:
+                  "save_assignments",
+
+                user_id:
+                  Number(
+                    selectedUser.id
+                  ),
+
+                song_ids:
+                  Array.from(
+                    selectedSongIds
+                  )
+              })
+          }
+        );
+
+      /*
+       * Re-sync from server.
+       */
+
+      selectedSongIds =
+        new Set(
+          (data.song_ids || [])
+            .map(id => Number(id))
+        );
+
+      renderSelectedUser();
+      renderSongs();
+      updateSelectionCount();
+
+      showToast(
+        `${data.assigned_count} songs assigned to ${selectedUser.username}`
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Save error:",
+        error
+      );
+
+      showToast(
+        error.message ||
+        "Failed to save assignments",
+        true
+      );
+
+    } finally {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        "Save assignments";
+    }
+  }
+);
+
+
+/* ==================================================
+   SEARCH
+================================================== */
+
+userSearch.addEventListener(
+  "input",
+  () => {
+
+    userSearchText =
+      userSearch.value;
+
+    renderUsers();
+  }
+);
+
+songSearch.addEventListener(
+  "input",
+  () => {
+
+    songSearchText =
+      songSearch.value;
+
+    renderSongs();
+  }
+);
+
+
+/* ==================================================
+   REFRESH
+================================================== */
+
+document
+  .getElementById("refreshButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      showToast(
+        "Refreshing..."
+      );
+
+      await loadAll();
+
+      showToast(
+        "Data refreshed"
+      );
+    }
+  );
+
+document
+  .getElementById("refreshNav")
+  .addEventListener(
+    "click",
+    async () => {
+
+      await loadAll();
+
+      showToast(
+        "Data refreshed"
+      );
+    }
+  );
+
+
+/* ==================================================
+   LOGOUT
+================================================== */
+
+document
+  .getElementById("logoutButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      const token =
+        sessionToken;
+
+      sessionStorage.removeItem(
+        "admin_session_token"
+      );
+
+      sessionToken = null;
+
+      /*
+       * Tell your existing logout
+       * function to invalidate the session.
+       */
+
+      if (token) {
+
+        try {
+
+          await fetch(
+            `${SUPABASE_FUNCTIONS}/logout`,
+            {
+              method: "POST",
+
+              headers: {
+                "Authorization":
+                  `Bearer ${token}`,
+                "Content-Type":
+                  "application/json"
+              }
+            }
+          );
+
+        } catch {
+          // Local logout still succeeds.
+        }
+      }
+
+      selectedUser = null;
+      selectedSongIds.clear();
+
+      showLogin();
+    }
+  );
+
+
+/* ==================================================
+   SHOW / HIDE
+================================================== */
+
+function showApp() {
+
+  loginScreen.classList.add(
+    "hidden"
+  );
+
+  app.classList.remove(
+    "hidden"
+  );
+}
+
+function showLogin() {
+
+  app.classList.add(
+    "hidden"
+  );
+
+  loginScreen.classList.remove(
+    "hidden"
+  );
+
+  loginPassword.value = "";
+  loginError.textContent = "";
+}
+
+
+/* ==================================================
+   AUTO LOGIN FROM EXISTING SESSION
+================================================== */
+
+async function restoreSession() {
+
+  if (!sessionToken) {
+    showLogin();
+    return;
+  }
+
+  try {
+
+    const me =
+      await adminFetch(
+        `${ADMIN_URL}?action=me`
+      );
+
+    adminName.textContent =
+      me.admin?.name ||
+      me.admin?.username ||
+      "Admin";
+
+    showApp();
+
+    await loadAll();
+
+  } catch (error) {
+
+    console.log(
+      "No valid admin session:",
+      error
+    );
+
+    sessionStorage.removeItem(
+      "admin_session_token"
+    );
+
+    sessionToken = null;
+
+    showLogin();
+  }
+}
+
+
+/* ==================================================
+   START
+================================================== */
+
+restoreSession();
 
 </script>
 
