@@ -155,6 +155,12 @@ button{
   transform:translateY(-1px);
 }
 
+.primary-btn:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+  transform:none;
+}
+
 .error{
   color:#ff7777;
   font-size:13px;
@@ -222,7 +228,7 @@ button{
   border:0;
   color:#aab4ae;
   background:transparent;
-  padding:12px 12px;
+  padding:12px;
   border-radius:10px;
   text-align:left;
   margin-bottom:4px;
@@ -740,10 +746,6 @@ h1{
 
 <body>
 
-<!-- ==================================================
-     LOGIN
-================================================== -->
-
 <section id="loginScreen">
 
   <div class="login-card">
@@ -798,10 +800,6 @@ h1{
 </section>
 
 
-<!-- ==================================================
-     APPLICATION
-================================================== -->
-
 <div
   id="app"
   class="hidden"
@@ -825,9 +823,7 @@ h1{
       Management
     </div>
 
-    <button
-      class="nav-item active"
-    >
+    <button class="nav-item active">
       Assignments
     </button>
 
@@ -897,8 +893,6 @@ h1{
     </div>
 
 
-    <!-- STATS -->
-
     <div class="stats">
 
       <div class="stat">
@@ -943,11 +937,7 @@ h1{
     </div>
 
 
-    <!-- WORKSPACE -->
-
     <div class="workspace">
-
-      <!-- USERS -->
 
       <section class="panel">
 
@@ -974,17 +964,13 @@ h1{
           id="usersList"
           class="users"
         >
-
           <div class="empty">
             Loading users...
           </div>
-
         </div>
 
       </section>
 
-
-      <!-- SONGS -->
 
       <section class="panel song-panel">
 
@@ -1019,6 +1005,7 @@ h1{
           <button
             id="selectAll"
             class="small-btn"
+            type="button"
           >
             Select all
           </button>
@@ -1026,6 +1013,7 @@ h1{
           <button
             id="clearAll"
             class="small-btn"
+            type="button"
           >
             Clear
           </button>
@@ -1037,11 +1025,9 @@ h1{
           id="songsList"
           class="song-list"
         >
-
           <div class="empty">
             Select a user first.
           </div>
-
         </div>
 
 
@@ -1058,6 +1044,7 @@ h1{
             id="saveButton"
             class="save-btn"
             disabled
+            type="button"
           >
             Save assignments
           </button>
@@ -1080,6 +1067,7 @@ h1{
 
 
 <script>
+
 /* ==================================================
    CONFIG
 ================================================== */
@@ -1087,11 +1075,26 @@ h1{
 const SUPABASE_FUNCTIONS =
   "https://lzwchczsbbzspakwuafx.supabase.co/functions/v1";
 
+/*
+ * Existing login function
+ */
 const LOGIN_URL =
   `${SUPABASE_FUNCTIONS}/portal-login`;
 
+/*
+ * IMPORTANT:
+ * This is your ACTUAL admin Edge Function.
+ *
+ * NOT /admin-music
+ */
 const ADMIN_URL =
-  `${SUPABASE_FUNCTIONS}/admin-music`;
+  `${SUPABASE_FUNCTIONS}/admin-song-assignments`;
+
+/*
+ * Existing logout function
+ */
+const LOGOUT_URL =
+  `${SUPABASE_FUNCTIONS}/logout`;
 
 
 /* ==================================================
@@ -1123,7 +1126,9 @@ const loginScreen =
   );
 
 const app =
-  document.getElementById("app");
+  document.getElementById(
+    "app"
+  );
 
 const loginForm =
   document.getElementById(
@@ -1228,14 +1233,17 @@ function showToast(
 ) {
   clearTimeout(toastTimer);
 
-  toast.textContent = message;
+  toast.textContent =
+    message;
 
   toast.classList.toggle(
     "error",
     isError
   );
 
-  toast.classList.add("show");
+  toast.classList.add(
+    "show"
+  );
 
   toastTimer =
     setTimeout(() => {
@@ -1247,6 +1255,21 @@ function showToast(
 
 
 /* ==================================================
+   CLEAR SESSION
+================================================== */
+
+function clearSession() {
+
+  sessionStorage.removeItem(
+    "admin_session_token"
+  );
+
+  sessionToken = null;
+
+}
+
+
+/* ==================================================
    API
 ================================================== */
 
@@ -1254,21 +1277,26 @@ async function adminFetch(
   url,
   options = {}
 ) {
+
   if (!sessionToken) {
+
     throw new Error(
       "No admin session. Please log in."
     );
+
   }
 
   const headers = {
     ...(options.headers || {}),
+
     "Authorization":
       `Bearer ${sessionToken}`,
+
     "Content-Type":
       "application/json"
   };
 
-  const response =
+  const res =
     await fetch(
       url,
       {
@@ -1277,48 +1305,76 @@ async function adminFetch(
       }
     );
 
-  let data;
+  let data = null;
 
-  try {
-    data =
-      await response.json();
-  } catch {
+  const text =
+    await res.text();
+
+  if (text) {
+
+    try {
+      data =
+        JSON.parse(text);
+    } catch {
+
+      data = {
+        success:false,
+        error:
+          text ||
+          "Invalid server response"
+      };
+
+    }
+
+  } else {
+
     data = {
-      success: false,
-      error:
-        "Invalid server response"
+      success:
+        res.ok
     };
+
   }
 
-  // Session is invalid/expired
-  if (
-    response.status === 401
-  ) {
-    sessionStorage.removeItem(
-      "admin_session_token"
-    );
 
-    sessionToken = null;
+  /*
+   * Authentication failure
+   */
+
+  if (
+    res.status === 401
+  ) {
+
+    clearSession();
 
     showLogin();
 
     throw new Error(
-      data.error ||
+      data?.error ||
       "Session expired. Please log in again."
     );
+
   }
+
+
+  /*
+   * Any other server error
+   */
 
   if (
-    !response.ok ||
-    data.success === false
+    !res.ok ||
+    data?.success === false
   ) {
+
     throw new Error(
-      data.error ||
-      "Request failed"
+      data?.error ||
+      `Request failed (${res.status})`
     );
+
   }
 
+
   return data;
+
 }
 
 
@@ -1332,7 +1388,8 @@ loginForm.addEventListener(
 
     event.preventDefault();
 
-    loginError.textContent = "";
+    loginError.textContent =
+      "";
 
     const username =
       loginUsername.value.trim();
@@ -1347,25 +1404,26 @@ loginForm.addEventListener(
       return;
     }
 
-    loginButton.disabled = true;
+    loginButton.disabled =
+      true;
+
     loginButton.textContent =
       "Signing in...";
 
     try {
 
       /*
-       * IMPORTANT:
-       * We use your existing portal-login
-       * function here.
+       * Login through existing
+       * portal-login function.
        */
 
-      const response =
+      const res =
         await fetch(
           LOGIN_URL,
           {
-            method: "POST",
+            method:"POST",
 
-            headers: {
+            headers:{
               "Content-Type":
                 "application/json"
             },
@@ -1378,35 +1436,44 @@ loginForm.addEventListener(
           }
         );
 
+
       let data;
 
+      const text =
+        await res.text();
+
       try {
+
         data =
-          await response.json();
+          text
+            ? JSON.parse(text)
+            : {};
+
       } catch {
-        data = {
-          success: false,
-          error:
-            "Invalid login response"
-        };
+
+        throw new Error(
+          "Invalid login response from server."
+        );
+
       }
 
+
       if (
-        !response.ok ||
+        !res.ok ||
         !data.success ||
         !data.token
       ) {
+
         throw new Error(
           data.error ||
           "Invalid username or password"
         );
+
       }
 
+
       /*
-       * THIS IS THE IMPORTANT FIX.
-       *
-       * Save the token returned by
-       * portal-login.
+       * Store custom session token.
        */
 
       sessionToken =
@@ -1417,9 +1484,10 @@ loginForm.addEventListener(
         sessionToken
       );
 
+
       /*
-       * Now ask admin-music whether
-       * this account is actually an admin.
+       * Verify that this account
+       * is actually the administrator.
        */
 
       const me =
@@ -1427,14 +1495,17 @@ loginForm.addEventListener(
           `${ADMIN_URL}?action=me`
         );
 
+
       adminName.textContent =
         me.admin?.name ||
         me.admin?.username ||
         username;
 
+
       showApp();
 
       await loadAll();
+
 
     } catch (error) {
 
@@ -1444,14 +1515,11 @@ loginForm.addEventListener(
       );
 
       loginError.textContent =
-        error.message ||
+        error?.message ||
         "Login failed";
 
-      sessionStorage.removeItem(
-        "admin_session_token"
-      );
 
-      sessionToken = null;
+      clearSession();
 
     } finally {
 
@@ -1460,7 +1528,9 @@ loginForm.addEventListener(
 
       loginButton.textContent =
         "Sign in";
+
     }
+
   }
 );
 
@@ -1477,19 +1547,26 @@ async function loadAll() {
       usersData,
       songsData
     ] = await Promise.all([
+
       adminFetch(
         `${ADMIN_URL}?action=users`
       ),
+
       adminFetch(
         `${ADMIN_URL}?action=songs`
       )
+
     ]);
 
+
     users =
-      usersData.users || [];
+      usersData.users ||
+      [];
 
     songs =
-      songsData.songs || [];
+      songsData.songs ||
+      [];
+
 
     userCount.textContent =
       users.length;
@@ -1497,7 +1574,9 @@ async function loadAll() {
     songCount.textContent =
       songs.length;
 
+
     renderUsers();
+
 
     if (selectedUser) {
 
@@ -1508,21 +1587,31 @@ async function loadAll() {
             Number(selectedUser.id)
         );
 
+
       if (stillExists) {
+
         selectedUser =
           stillExists;
 
         await loadAssignments(
           selectedUser.id
         );
+
       } else {
-        selectedUser = null;
+
+        selectedUser =
+          null;
+
         selectedSongIds.clear();
+
         renderSelectedUser();
         renderSongs();
+        updateSelectionCount();
+
       }
 
     }
+
 
   } catch (error) {
 
@@ -1532,11 +1621,13 @@ async function loadAll() {
     );
 
     showToast(
-      error.message ||
+      error?.message ||
       "Failed to load data",
       true
     );
+
   }
+
 }
 
 
@@ -1551,27 +1642,43 @@ function renderUsers() {
       .toLowerCase()
       .trim();
 
+
   const filtered =
-    users.filter(user => {
+    users.filter(
+      user => {
 
-      const username =
-        String(
-          user.username || ""
-        ).toLowerCase();
+        const username =
+          String(
+            user.username ||
+            ""
+          )
+          .toLowerCase();
 
-      const name =
-        String(
-          user.name || ""
-        ).toLowerCase();
+        const name =
+          String(
+            user.name ||
+            ""
+          )
+          .toLowerCase();
 
-      return (
-        !query ||
-        username.includes(query) ||
-        name.includes(query)
-      );
-    });
 
-  usersList.innerHTML = "";
+        return (
+          !query ||
+          username.includes(
+            query
+          ) ||
+          name.includes(
+            query
+          )
+        );
+
+      }
+    );
+
+
+  usersList.innerHTML =
+    "";
+
 
   if (!filtered.length) {
 
@@ -1581,65 +1688,90 @@ function renderUsers() {
       </div>`;
 
     return;
+
   }
 
-  filtered.forEach(user => {
 
-    const button =
-      document.createElement(
-        "button"
-      );
+  filtered.forEach(
+    user => {
 
-    button.className =
-      "user";
+      const button =
+        document.createElement(
+          "button"
+        );
 
-    if (
-      selectedUser &&
-      Number(selectedUser.id) ===
-      Number(user.id)
-    ) {
-      button.classList.add(
-        "selected"
-      );
-    }
+      button.className =
+        "user";
 
-    const name =
-      document.createElement(
-        "div"
-      );
 
-    name.className =
-      "user-name";
+      if (
+        selectedUser &&
+        Number(
+          selectedUser.id
+        ) ===
+        Number(user.id)
+      ) {
 
-    name.textContent =
-      user.name ||
-      user.username;
+        button.classList.add(
+          "selected"
+        );
 
-    const username =
-      document.createElement(
-        "div"
-      );
-
-    username.className =
-      "user-username";
-
-    username.textContent =
-      `@${user.username}`;
-
-    button.appendChild(name);
-    button.appendChild(username);
-
-    button.addEventListener(
-      "click",
-      () => {
-        selectUser(user);
       }
-    );
 
-    usersList.appendChild(
-      button
-    );
-  });
+
+      const name =
+        document.createElement(
+          "div"
+        );
+
+      name.className =
+        "user-name";
+
+      name.textContent =
+        user.name ||
+        user.username;
+
+
+      const username =
+        document.createElement(
+          "div"
+        );
+
+      username.className =
+        "user-username";
+
+      username.textContent =
+        `@${user.username}`;
+
+
+      button.appendChild(
+        name
+      );
+
+      button.appendChild(
+        username
+      );
+
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          selectUser(
+            user
+          );
+
+        }
+      );
+
+
+      usersList.appendChild(
+        button
+      );
+
+    }
+  );
+
 }
 
 
@@ -1651,15 +1783,20 @@ async function selectUser(
   user
 ) {
 
-  selectedUser = user;
+  selectedUser =
+    user;
 
   selectedSongIds.clear();
 
   renderUsers();
+
   renderSelectedUser();
+
   renderSongs();
 
-  saveButton.disabled = true;
+  saveButton.disabled =
+    true;
+
 
   try {
 
@@ -1670,11 +1807,13 @@ async function selectUser(
   } catch (error) {
 
     showToast(
-      error.message ||
+      error?.message ||
       "Failed to load assignments",
       true
     );
+
   }
+
 }
 
 
@@ -1691,17 +1830,27 @@ async function loadAssignments(
       `${ADMIN_URL}?action=assignments&user_id=${encodeURIComponent(userId)}`
     );
 
+
   selectedSongIds =
     new Set(
       (data.song_ids || [])
-        .map(id => Number(id))
+        .map(
+          id =>
+            Number(id)
+        )
     );
 
+
   renderSelectedUser();
+
   renderSongs();
+
   updateSelectionCount();
 
-  saveButton.disabled = false;
+
+  saveButton.disabled =
+    false;
+
 }
 
 
@@ -1720,14 +1869,18 @@ function renderSelectedUser() {
       "Choose a user from the left.";
 
     return;
+
   }
+
 
   selectedUserName.textContent =
     selectedUser.name ||
     selectedUser.username;
 
+
   selectedUserMeta.textContent =
     `@${selectedUser.username} · ${selectedSongIds.size} assigned`;
+
 }
 
 
@@ -1737,7 +1890,9 @@ function renderSelectedUser() {
 
 function renderSongs() {
 
-  songsList.innerHTML = "";
+  songsList.innerHTML =
+    "";
+
 
   if (!selectedUser) {
 
@@ -1747,32 +1902,48 @@ function renderSongs() {
       </div>`;
 
     return;
+
   }
+
 
   const query =
     songSearchText
       .toLowerCase()
       .trim();
 
+
   const filtered =
-    songs.filter(song => {
+    songs.filter(
+      song => {
 
-      const title =
-        String(
-          song.title || ""
-        ).toLowerCase();
+        const title =
+          String(
+            song.title ||
+            ""
+          )
+          .toLowerCase();
 
-      const artist =
-        String(
-          song.artist || ""
-        ).toLowerCase();
+        const artist =
+          String(
+            song.artist ||
+            ""
+          )
+          .toLowerCase();
 
-      return (
-        !query ||
-        title.includes(query) ||
-        artist.includes(query)
-      );
-    });
+
+        return (
+          !query ||
+          title.includes(
+            query
+          ) ||
+          artist.includes(
+            query
+          )
+        );
+
+      }
+    );
+
 
   if (!filtered.length) {
 
@@ -1782,98 +1953,129 @@ function renderSongs() {
       </div>`;
 
     return;
+
   }
 
-  filtered.forEach(song => {
 
-    const row =
-      document.createElement(
-        "label"
-      );
+  filtered.forEach(
+    song => {
 
-    row.className =
-      "song";
+      const row =
+        document.createElement(
+          "label"
+        );
 
-    const checkbox =
-      document.createElement(
-        "input"
-      );
+      row.className =
+        "song";
 
-    checkbox.type =
-      "checkbox";
 
-    checkbox.checked =
-      selectedSongIds.has(
-        Number(song.id)
-      );
+      const checkbox =
+        document.createElement(
+          "input"
+        );
 
-    checkbox.addEventListener(
-      "change",
-      () => {
+      checkbox.type =
+        "checkbox";
 
-        const id =
-          Number(song.id);
+      checkbox.checked =
+        selectedSongIds.has(
+          Number(song.id)
+        );
 
-        if (
-          checkbox.checked
-        ) {
-          selectedSongIds.add(id);
-        } else {
-          selectedSongIds.delete(id);
+
+      checkbox.addEventListener(
+        "change",
+        () => {
+
+          const id =
+            Number(song.id);
+
+
+          if (
+            checkbox.checked
+          ) {
+
+            selectedSongIds.add(
+              id
+            );
+
+          } else {
+
+            selectedSongIds.delete(
+              id
+            );
+
+          }
+
+
+          updateSelectionCount();
+
+          renderSelectedUser();
+
         }
-
-        updateSelectionCount();
-        renderSelectedUser();
-      }
-    );
-
-    const info =
-      document.createElement(
-        "div"
       );
 
-    info.className =
-      "song-info";
 
-    const title =
-      document.createElement(
-        "div"
+      const info =
+        document.createElement(
+          "div"
+        );
+
+      info.className =
+        "song-info";
+
+
+      const title =
+        document.createElement(
+          "div"
+        );
+
+      title.className =
+        "song-title";
+
+      title.textContent =
+        song.title ||
+        "Untitled";
+
+
+      const artist =
+        document.createElement(
+          "div"
+        );
+
+      artist.className =
+        "song-artist";
+
+      artist.textContent =
+        song.artist ||
+        "Unknown artist";
+
+
+      info.appendChild(
+        title
       );
 
-    title.className =
-      "song-title";
-
-    title.textContent =
-      song.title ||
-      "Untitled";
-
-    const artist =
-      document.createElement(
-        "div"
+      info.appendChild(
+        artist
       );
 
-    artist.className =
-      "song-artist";
 
-    artist.textContent =
-      song.artist ||
-      "Unknown artist";
+      row.appendChild(
+        checkbox
+      );
 
-    info.appendChild(title);
-    info.appendChild(artist);
+      row.appendChild(
+        info
+      );
 
-    row.appendChild(
-      checkbox
-    );
 
-    row.appendChild(
-      info
-    );
+      songsList.appendChild(
+        row
+      );
 
-    songsList.appendChild(
-      row
-    );
-  });
+    }
+  );
+
 }
 
 
@@ -1886,16 +2088,22 @@ function updateSelectionCount() {
   const count =
     selectedSongIds.size;
 
+
   selectedCount.textContent =
     count;
+
 
   selectionText.innerHTML =
     `<strong>${count}</strong> songs selected`;
 
+
   if (selectedUser) {
+
     selectedUserMeta.textContent =
       `@${selectedUser.username} · ${count} assigned`;
+
   }
+
 }
 
 
@@ -1904,51 +2112,77 @@ function updateSelectionCount() {
 ================================================== */
 
 document
-  .getElementById("selectAll")
+  .getElementById(
+    "selectAll"
+  )
   .addEventListener(
     "click",
     () => {
 
       if (!selectedUser) {
+
         showToast(
           "Select a user first",
           true
         );
+
         return;
+
       }
+
 
       const query =
         songSearchText
           .toLowerCase()
           .trim();
 
+
       songs
-        .filter(song => {
+        .filter(
+          song => {
 
-          const title =
-            String(
-              song.title || ""
-            ).toLowerCase();
+            const title =
+              String(
+                song.title ||
+                ""
+              )
+              .toLowerCase();
 
-          const artist =
-            String(
-              song.artist || ""
-            ).toLowerCase();
+            const artist =
+              String(
+                song.artist ||
+                ""
+              )
+              .toLowerCase();
 
-          return (
-            !query ||
-            title.includes(query) ||
-            artist.includes(query)
-          );
-        })
-        .forEach(song => {
-          selectedSongIds.add(
-            Number(song.id)
-          );
-        });
+
+            return (
+              !query ||
+              title.includes(
+                query
+              ) ||
+              artist.includes(
+                query
+              )
+            );
+
+          }
+        )
+        .forEach(
+          song => {
+
+            selectedSongIds.add(
+              Number(song.id)
+            );
+
+          }
+        );
+
 
       renderSongs();
+
       updateSelectionCount();
+
     }
   );
 
@@ -1958,51 +2192,77 @@ document
 ================================================== */
 
 document
-  .getElementById("clearAll")
+  .getElementById(
+    "clearAll"
+  )
   .addEventListener(
     "click",
     () => {
 
       if (!selectedUser) {
+
         showToast(
           "Select a user first",
           true
         );
+
         return;
+
       }
+
 
       const query =
         songSearchText
           .toLowerCase()
           .trim();
 
+
       songs
-        .filter(song => {
+        .filter(
+          song => {
 
-          const title =
-            String(
-              song.title || ""
-            ).toLowerCase();
+            const title =
+              String(
+                song.title ||
+                ""
+              )
+              .toLowerCase();
 
-          const artist =
-            String(
-              song.artist || ""
-            ).toLowerCase();
+            const artist =
+              String(
+                song.artist ||
+                ""
+              )
+              .toLowerCase();
 
-          return (
-            !query ||
-            title.includes(query) ||
-            artist.includes(query)
-          );
-        })
-        .forEach(song => {
-          selectedSongIds.delete(
-            Number(song.id)
-          );
-        });
+
+            return (
+              !query ||
+              title.includes(
+                query
+              ) ||
+              artist.includes(
+                query
+              )
+            );
+
+          }
+        )
+        .forEach(
+          song => {
+
+            selectedSongIds.delete(
+              Number(song.id)
+            );
+
+          }
+        );
+
 
       renderSongs();
+
       updateSelectionCount();
+
     }
   );
 
@@ -2016,12 +2276,16 @@ saveButton.addEventListener(
   async () => {
 
     if (!selectedUser) {
+
       showToast(
         "Select a user first",
         true
       );
+
       return;
+
     }
+
 
     saveButton.disabled =
       true;
@@ -2029,13 +2293,14 @@ saveButton.addEventListener(
     saveButton.textContent =
       "Saving...";
 
+
     try {
 
       const data =
         await adminFetch(
           ADMIN_URL,
           {
-            method: "POST",
+            method:"POST",
 
             body:
               JSON.stringify({
@@ -2055,23 +2320,47 @@ saveButton.addEventListener(
           }
         );
 
+
       /*
-       * Re-sync from server.
+       * The Edge Function returns:
+       *
+       * {
+       *   success:true,
+       *   count:...
+       * }
+       *
+       * So use data.count.
        */
+
+      const count =
+        Number(
+          data.count ??
+          data.assigned_count ??
+          selectedSongIds.size
+        );
+
 
       selectedSongIds =
         new Set(
           (data.song_ids || [])
-            .map(id => Number(id))
+            .map(
+              id =>
+                Number(id)
+            )
         );
 
+
       renderSelectedUser();
+
       renderSongs();
+
       updateSelectionCount();
 
+
       showToast(
-        `${data.assigned_count} songs assigned to ${selectedUser.username}`
+        `${count} songs assigned to ${selectedUser.username}`
       );
+
 
     } catch (error) {
 
@@ -2080,11 +2369,13 @@ saveButton.addEventListener(
         error
       );
 
+
       showToast(
-        error.message ||
+        error?.message ||
         "Failed to save assignments",
         true
       );
+
 
     } finally {
 
@@ -2093,7 +2384,9 @@ saveButton.addEventListener(
 
       saveButton.textContent =
         "Save assignments";
+
     }
+
   }
 );
 
@@ -2110,8 +2403,10 @@ userSearch.addEventListener(
       userSearch.value;
 
     renderUsers();
+
   }
 );
+
 
 songSearch.addEventListener(
   "input",
@@ -2121,6 +2416,7 @@ songSearch.addEventListener(
       songSearch.value;
 
     renderSongs();
+
   }
 );
 
@@ -2130,7 +2426,9 @@ songSearch.addEventListener(
 ================================================== */
 
 document
-  .getElementById("refreshButton")
+  .getElementById(
+    "refreshButton"
+  )
   .addEventListener(
     "click",
     async () => {
@@ -2144,11 +2442,15 @@ document
       showToast(
         "Data refreshed"
       );
+
     }
   );
 
+
 document
-  .getElementById("refreshNav")
+  .getElementById(
+    "refreshNav"
+  )
   .addEventListener(
     "click",
     async () => {
@@ -2158,6 +2460,7 @@ document
       showToast(
         "Data refreshed"
       );
+
     }
   );
 
@@ -2167,7 +2470,9 @@ document
 ================================================== */
 
 document
-  .getElementById("logoutButton")
+  .getElementById(
+    "logoutButton"
+  )
   .addEventListener(
     "click",
     async () => {
@@ -2175,29 +2480,23 @@ document
       const token =
         sessionToken;
 
-      sessionStorage.removeItem(
-        "admin_session_token"
-      );
 
-      sessionToken = null;
+      clearSession();
 
-      /*
-       * Tell your existing logout
-       * function to invalidate the session.
-       */
 
       if (token) {
 
         try {
 
           await fetch(
-            `${SUPABASE_FUNCTIONS}/logout`,
+            LOGOUT_URL,
             {
-              method: "POST",
+              method:"POST",
 
-              headers: {
+              headers:{
                 "Authorization":
                   `Bearer ${token}`,
+
                 "Content-Type":
                   "application/json"
               }
@@ -2205,14 +2504,24 @@ document
           );
 
         } catch {
-          // Local logout still succeeds.
+
+          /*
+           * Local logout still succeeds.
+           */
+
         }
+
       }
 
-      selectedUser = null;
+
+      selectedUser =
+        null;
+
       selectedSongIds.clear();
 
+
       showLogin();
+
     }
   );
 
@@ -2230,7 +2539,9 @@ function showApp() {
   app.classList.remove(
     "hidden"
   );
+
 }
+
 
 function showLogin() {
 
@@ -2242,21 +2553,29 @@ function showLogin() {
     "hidden"
   );
 
-  loginPassword.value = "";
-  loginError.textContent = "";
+  loginPassword.value =
+    "";
+
+  loginError.textContent =
+    "";
+
 }
 
 
 /* ==================================================
-   AUTO LOGIN FROM EXISTING SESSION
+   AUTO LOGIN
 ================================================== */
 
 async function restoreSession() {
 
   if (!sessionToken) {
+
     showLogin();
+
     return;
+
   }
+
 
   try {
 
@@ -2265,14 +2584,18 @@ async function restoreSession() {
         `${ADMIN_URL}?action=me`
       );
 
+
     adminName.textContent =
       me.admin?.name ||
       me.admin?.username ||
       "Admin";
 
+
     showApp();
 
+
     await loadAll();
+
 
   } catch (error) {
 
@@ -2281,14 +2604,13 @@ async function restoreSession() {
       error
     );
 
-    sessionStorage.removeItem(
-      "admin_session_token"
-    );
 
-    sessionToken = null;
+    clearSession();
 
     showLogin();
+
   }
+
 }
 
 
