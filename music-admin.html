@@ -1,0 +1,1855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Music Admin — Optima M3</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --bg:#060708;
+    --panel:#121418;
+    --panel2:#1a1e23;
+    --border:rgba(255,255,255,.08);
+    --border-light:rgba(255,255,255,.16);
+
+    --text:#fff;
+    --muted:#a0a6b0;
+    --muted2:#6c727e;
+
+    --accent:#1ed760;
+    --accent-bright:#22f06b;
+    --accent-soft:rgba(30,215,96,.13);
+    --danger:#ff5c7a;
+
+    --radius:20px;
+}
+
+html{
+    background:var(--bg);
+    color-scheme:dark;
+}
+
+body{
+    min-height:100vh;
+
+    background:
+        radial-gradient(
+            circle at 85% -10%,
+            rgba(30,215,96,.18),
+            transparent 45%
+        ),
+        radial-gradient(
+            circle at 15% 40%,
+            rgba(18,120,55,.12),
+            transparent 40%
+        ),
+        var(--bg);
+
+    color:var(--text);
+
+    font-family:
+        Inter,
+        ui-sans-serif,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+
+button,
+input{
+    font:inherit;
+}
+
+button{
+    border:0;
+}
+
+button:focus-visible,
+input:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+}
+
+
+/* SIDEBAR */
+
+.sidebar{
+    position:fixed;
+    inset:0 auto 0 0;
+
+    width:270px;
+
+    padding:32px 20px;
+
+    background:rgba(10,11,13,.78);
+
+    border-right:1px solid var(--border);
+
+    backdrop-filter:blur(28px);
+
+    z-index:20;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+
+    gap:14px;
+
+    padding:8px 10px 38px;
+}
+
+.brand-mark{
+    width:44px;
+    height:44px;
+
+    display:grid;
+    place-items:center;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #25e96d,
+            #10a346
+        );
+
+    color:#040d06;
+
+    font-size:22px;
+    font-weight:900;
+
+    box-shadow:
+        0 0 22px rgba(30,215,96,.35);
+}
+
+.brand-text{
+    font-size:18px;
+    font-weight:800;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff,
+            #c2c7cf
+        );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.nav-heading{
+    padding:0 12px;
+
+    margin-bottom:12px;
+
+    color:var(--muted2);
+
+    font-size:10px;
+    font-weight:800;
+
+    letter-spacing:1.8px;
+
+    text-transform:uppercase;
+}
+
+.nav-item{
+    width:100%;
+
+    display:flex;
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 15px;
+
+    margin-bottom:6px;
+
+    border-radius:14px;
+
+    background:transparent;
+
+    color:var(--muted);
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    text-align:left;
+
+    transition:.25s ease;
+}
+
+.nav-item:hover{
+    background:rgba(255,255,255,.07);
+    color:#fff;
+    transform:translateX(4px);
+}
+
+.nav-item.active{
+    background:
+        linear-gradient(
+            90deg,
+            var(--accent-soft),
+            rgba(30,215,96,.03)
+        );
+
+    color:var(--accent);
+
+    border-left:3px solid var(--accent);
+}
+
+.nav-icon{
+    width:22px;
+    text-align:center;
+
+    font-size:18px;
+}
+
+
+/* MAIN */
+
+.main{
+    margin-left:270px;
+
+    min-height:100vh;
+
+    padding:42px 48px 60px;
+}
+
+.topbar{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+
+    gap:30px;
+
+    margin-bottom:34px;
+}
+
+.eyebrow{
+    color:var(--accent);
+
+    margin-bottom:8px;
+
+    font-size:11px;
+    font-weight:800;
+
+    letter-spacing:2px;
+
+    text-transform:uppercase;
+}
+
+h1{
+    font-size:clamp(32px,4vw,48px);
+
+    line-height:1;
+
+    letter-spacing:-1.8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #fff 30%,
+            rgba(255,255,255,.68)
+        );
+
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+    margin-top:10px;
+
+    color:var(--muted);
+
+    font-size:14px;
+}
+
+
+/* USER SELECTOR */
+
+.workspace{
+    display:grid;
+
+    grid-template-columns:270px minmax(0,1fr);
+
+    gap:22px;
+}
+
+.panel{
+    border:1px solid var(--border);
+
+    border-radius:var(--radius);
+
+    background:
+        linear-gradient(
+            160deg,
+            rgba(255,255,255,.06),
+            rgba(255,255,255,.025)
+        );
+
+    backdrop-filter:blur(18px);
+
+    overflow:hidden;
+}
+
+.panel-header{
+    padding:20px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.panel-title{
+    font-size:16px;
+    font-weight:800;
+}
+
+.panel-subtitle{
+    margin-top:5px;
+
+    color:var(--muted);
+
+    font-size:12px;
+}
+
+
+/* USERS */
+
+.users{
+    padding:10px;
+}
+
+.user{
+    width:100%;
+
+    display:flex;
+    align-items:center;
+
+    gap:12px;
+
+    padding:13px;
+
+    margin-bottom:5px;
+
+    border-radius:13px;
+
+    background:transparent;
+
+    color:var(--muted);
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.user:hover{
+    background:rgba(255,255,255,.06);
+    color:#fff;
+}
+
+.user.active{
+    background:var(--accent-soft);
+    color:var(--accent);
+}
+
+.user-avatar{
+    width:36px;
+    height:36px;
+
+    display:grid;
+    place-items:center;
+
+    flex-shrink:0;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #24292d,
+            #111315
+        );
+
+    border:1px solid var(--border);
+
+    font-weight:800;
+}
+
+.user-info{
+    min-width:0;
+}
+
+.user-name{
+    overflow:hidden;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    color:inherit;
+
+    font-size:13px;
+    font-weight:700;
+}
+
+.user-username{
+    margin-top:3px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    color:var(--muted2);
+
+    font-size:11px;
+}
+
+
+/* SONG PANEL */
+
+.song-toolbar{
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+
+    padding:16px 20px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.search{
+    position:relative;
+
+    flex:1;
+}
+
+.search input{
+    width:100%;
+
+    height:44px;
+
+    padding:0 15px 0 42px;
+
+    border:1px solid var(--border);
+
+    border-radius:13px;
+
+    background:rgba(255,255,255,.045);
+
+    color:#fff;
+
+    outline:none;
+}
+
+.search input:focus{
+    border-color:var(--accent);
+
+    box-shadow:
+        0 0 18px rgba(30,215,96,.12);
+}
+
+.search-icon{
+    position:absolute;
+
+    left:15px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:var(--muted);
+
+    pointer-events:none;
+}
+
+.toolbar-button{
+    height:44px;
+
+    padding:0 15px;
+
+    border-radius:13px;
+
+    background:rgba(255,255,255,.06);
+
+    color:var(--muted);
+
+    border:1px solid var(--border);
+
+    cursor:pointer;
+
+    font-size:12px;
+    font-weight:700;
+
+    transition:.2s ease;
+}
+
+.toolbar-button:hover{
+    background:rgba(255,255,255,.1);
+    color:#fff;
+}
+
+.toolbar-button.primary{
+    background:var(--accent);
+
+    color:#061009;
+
+    border-color:var(--accent);
+
+    box-shadow:
+        0 8px 22px rgba(30,215,96,.2);
+}
+
+.toolbar-button.primary:hover{
+    background:var(--accent-bright);
+}
+
+
+/* COUNT */
+
+.song-status{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:15px 20px;
+
+    color:var(--muted);
+
+    font-size:12px;
+
+    border-bottom:1px solid var(--border);
+}
+
+.selected-count{
+    color:var(--accent);
+
+    font-weight:800;
+}
+
+
+/* SONGS */
+
+.song-list{
+    padding:10px;
+
+    max-height:620px;
+
+    overflow-y:auto;
+}
+
+.song{
+    display:flex;
+    align-items:center;
+
+    gap:13px;
+
+    padding:12px;
+
+    margin-bottom:5px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    transition:.18s ease;
+}
+
+.song:hover{
+    background:rgba(255,255,255,.045);
+}
+
+.song.selected{
+    background:rgba(30,215,96,.08);
+}
+
+.checkbox{
+    width:21px;
+    height:21px;
+
+    flex-shrink:0;
+
+    appearance:none;
+
+    border:1px solid rgba(255,255,255,.2);
+
+    border-radius:6px;
+
+    background:rgba(255,255,255,.03);
+
+    cursor:pointer;
+
+    position:relative;
+}
+
+.checkbox:checked{
+    background:var(--accent);
+
+    border-color:var(--accent);
+}
+
+.checkbox:checked::after{
+    content:"✓";
+
+    position:absolute;
+
+    inset:0;
+
+    display:grid;
+    place-items:center;
+
+    color:#061009;
+
+    font-size:14px;
+    font-weight:900;
+}
+
+.song-art{
+    width:43px;
+    height:43px;
+
+    display:grid;
+    place-items:center;
+
+    flex-shrink:0;
+
+    border-radius:11px;
+
+    background:
+        radial-gradient(
+            circle at 25% 20%,
+            rgba(255,255,255,.15),
+            transparent 35%
+        ),
+        linear-gradient(
+            145deg,
+            #252a2e,
+            #0d0f11
+        );
+
+    color:var(--muted);
+
+    font-size:19px;
+}
+
+.song.selected .song-art{
+    color:var(--accent);
+}
+
+.song-info{
+    min-width:0;
+    flex:1;
+}
+
+.song-title{
+    overflow:hidden;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    font-size:13px;
+    font-weight:750;
+}
+
+.song-artist{
+    margin-top:3px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+    text-overflow:ellipsis;
+
+    color:var(--muted);
+
+    font-size:11px;
+}
+
+
+/* SAVE */
+
+.save-area{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:18px 20px;
+
+    border-top:1px solid var(--border);
+}
+
+.current-user{
+    color:var(--muted);
+
+    font-size:12px;
+}
+
+.current-user strong{
+    color:#fff;
+}
+
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+
+    right:25px;
+    bottom:25px;
+
+    padding:14px 18px;
+
+    border:1px solid var(--border-light);
+
+    border-radius:14px;
+
+    background:rgba(18,20,24,.95);
+
+    backdrop-filter:blur(20px);
+
+    color:#fff;
+
+    font-size:13px;
+    font-weight:700;
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.5);
+
+    opacity:0;
+
+    transform:translateY(12px);
+
+    pointer-events:none;
+
+    transition:.25s ease;
+
+    z-index:100;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateY(0);
+}
+
+.toast.success{
+    border-color:rgba(30,215,96,.35);
+}
+
+.toast.error{
+    border-color:rgba(255,92,122,.4);
+}
+
+
+/* EMPTY */
+
+.empty{
+    padding:60px 20px;
+
+    text-align:center;
+
+    color:var(--muted);
+}
+
+.empty-icon{
+    font-size:32px;
+
+    color:var(--accent);
+
+    margin-bottom:10px;
+}
+
+.empty-title{
+    color:#fff;
+
+    font-weight:700;
+}
+
+.empty-text{
+    margin-top:5px;
+
+    font-size:12px;
+}
+
+
+/* LOADING */
+
+.loading{
+    padding:40px;
+
+    text-align:center;
+
+    color:var(--muted);
+
+    font-size:13px;
+}
+
+.spinner{
+    width:25px;
+    height:25px;
+
+    margin:0 auto 12px;
+
+    border:2px solid rgba(255,255,255,.1);
+
+    border-top-color:var(--accent);
+
+    border-radius:50%;
+
+    animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+
+/* MOBILE */
+
+@media(max-width:850px){
+
+    .sidebar{
+        display:none;
+    }
+
+    .main{
+        margin-left:0;
+
+        padding:28px 16px 40px;
+    }
+
+    .topbar{
+        display:block;
+    }
+
+    .workspace{
+        grid-template-columns:1fr;
+    }
+
+    .user-panel{
+        max-height:280px;
+    }
+
+    .users{
+        display:flex;
+
+        gap:7px;
+
+        overflow-x:auto;
+    }
+
+    .user{
+        width:auto;
+
+        min-width:160px;
+
+        margin:0;
+    }
+
+    .song-toolbar{
+        flex-wrap:wrap;
+    }
+
+    .search{
+        flex-basis:100%;
+        order:-1;
+    }
+
+    .song-list{
+        max-height:none;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="brand-mark">♪</div>
+        <div class="brand-text">Music- Optima M3</div>
+    </div>
+
+    <div class="nav-heading">
+        Administration
+    </div>
+
+    <button class="nav-item active">
+        <span class="nav-icon">♫</span>
+        <span>Song Assignments</span>
+    </button>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="topbar">
+
+        <div>
+
+            <div class="eyebrow">
+                PMSECURITY • MUSIC ADMIN
+            </div>
+
+            <h1>
+                Manage Library
+            </h1>
+
+            <p class="subtitle">
+                Assign songs to individual users.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <section class="workspace">
+
+
+        <!-- USERS -->
+
+        <div class="panel user-panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title">
+                    Users
+                </div>
+
+                <div class="panel-subtitle">
+                    Select a user to manage
+                    their library.
+                </div>
+
+            </div>
+
+            <div class="users" id="users">
+
+                <div class="loading">
+
+                    <div class="spinner"></div>
+
+                    Loading users...
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SONGS -->
+
+        <div class="panel">
+
+            <div class="panel-header">
+
+                <div class="panel-title" id="assignmentTitle">
+                    Select a user
+                </div>
+
+                <div class="panel-subtitle" id="assignmentSubtitle">
+                    Choose a user from the left.
+                </div>
+
+            </div>
+
+
+            <div class="song-toolbar">
+
+                <div class="search">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="search"
+                        type="search"
+                        placeholder="Search songs..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <button
+                    class="toolbar-button"
+                    id="selectAll"
+                >
+                    Select all
+                </button>
+
+                <button
+                    class="toolbar-button"
+                    id="clearAll"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+
+            <div class="song-status">
+
+                <span>
+                    Showing
+                    <strong id="visibleCount">0</strong>
+                    songs
+                </span>
+
+                <span class="selected-count">
+                    <span id="selectedCount">0</span>
+                    selected
+                </span>
+
+            </div>
+
+
+            <div
+                class="song-list"
+                id="songList"
+            >
+
+                <div class="empty">
+
+                    <div class="empty-icon">
+                        ♫
+                    </div>
+
+                    <div class="empty-title">
+                        No user selected
+                    </div>
+
+                    <div class="empty-text">
+                        Select a user to manage
+                        their songs.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="save-area">
+
+                <div
+                    class="current-user"
+                    id="currentUser"
+                >
+                    No user selected
+                </div>
+
+                <button
+                    class="toolbar-button primary"
+                    id="saveButton"
+                >
+                    Save assignments
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<div
+    class="toast"
+    id="toast"
+></div>
+
+
+<script>
+
+const API =
+    "https://xitmexidjgacikjpheji.supabase.co/functions/v1/admin-song-assignments";
+
+
+let users = [];
+
+let songs = [];
+
+let selectedUser = null;
+
+let assignedSongIds = new Set();
+
+let visibleSongIds = [];
+
+
+const usersEl =
+    document.getElementById("users");
+
+const songList =
+    document.getElementById("songList");
+
+const search =
+    document.getElementById("search");
+
+const selectedCount =
+    document.getElementById("selectedCount");
+
+const visibleCount =
+    document.getElementById("visibleCount");
+
+const assignmentTitle =
+    document.getElementById("assignmentTitle");
+
+const assignmentSubtitle =
+    document.getElementById("assignmentSubtitle");
+
+const currentUser =
+    document.getElementById("currentUser");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* TOAST */
+
+function showToast(message, type = "success") {
+
+    toast.textContent = message;
+
+    toast.className =
+        `toast show ${type}`;
+
+    setTimeout(() => {
+
+        toast.className = "toast";
+
+    }, 3000);
+}
+
+
+/* LOAD DATA */
+
+async function loadData() {
+
+    try {
+
+        usersEl.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                Loading users...
+            </div>
+        `;
+
+        const response =
+            await fetch(API);
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.error ||
+                "Failed to load data"
+            );
+
+        }
+
+        users =
+            data.users || [];
+
+        songs =
+            data.songs || [];
+
+        renderUsers();
+
+        if (users.length) {
+
+            selectUser(users[0]);
+
+        } else {
+
+            renderNoUsers();
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        usersEl.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">!</div>
+                <div class="empty-title">
+                    Failed to load
+                </div>
+                <div class="empty-text">
+                    ${escapeHTML(error.message)}
+                </div>
+            </div>
+        `;
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* USERS */
+
+function renderUsers() {
+
+    usersEl.innerHTML = "";
+
+    users.forEach(user => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "user";
+
+        if (
+            selectedUser &&
+            selectedUser.id === user.id
+        ) {
+            button.classList.add("active");
+        }
+
+        const initial =
+            (
+                user.name ||
+                user.username ||
+                "?"
+            )
+            .charAt(0)
+            .toUpperCase();
+
+        button.innerHTML = `
+            <div class="user-avatar">
+                ${escapeHTML(initial)}
+            </div>
+
+            <div class="user-info">
+
+                <div class="user-name">
+                    ${escapeHTML(
+                        user.name ||
+                        user.username
+                    )}
+                </div>
+
+                <div class="user-username">
+                    @${escapeHTML(
+                        user.username
+                    )}
+                </div>
+
+            </div>
+        `;
+
+        button.addEventListener(
+            "click",
+            () => selectUser(user)
+        );
+
+        usersEl.appendChild(button);
+
+    });
+
+}
+
+
+/* SELECT USER */
+
+async function selectUser(user) {
+
+    selectedUser = user;
+
+    renderUsers();
+
+    assignmentTitle.textContent =
+        `Assign songs to ${
+            user.name ||
+            user.username
+        }`;
+
+    assignmentSubtitle.textContent =
+        `@${user.username}`;
+
+    currentUser.innerHTML =
+        `Editing: <strong>${
+            escapeHTML(
+                user.name ||
+                user.username
+            )
+        }</strong>`;
+
+    songList.innerHTML = `
+        <div class="loading">
+            <div class="spinner"></div>
+            Loading assignments...
+        </div>
+    `;
+
+    try {
+
+        /*
+         * The GET endpoint currently returns
+         * users + songs.
+
+         * We need the selected user's
+         * existing assignments.
+         */
+
+        const response =
+            await fetch(
+                `${API}?user_id=${encodeURIComponent(user.id)}`
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            response.ok &&
+            data.success &&
+            Array.isArray(data.assigned_song_ids)
+        ) {
+
+            assignedSongIds =
+                new Set(
+                    data.assigned_song_ids
+                        .map(Number)
+                );
+
+        } else {
+
+            /*
+             * Fallback for the current
+             * function version.
+             *
+             * We'll use the dedicated
+             * assignments endpoint
+             * below.
+             */
+
+            const assignmentResponse =
+                await fetch(
+                    `${API}/user/${user.id}`
+                );
+
+            if (
+                assignmentResponse.ok
+            ) {
+
+                const assignmentData =
+                    await assignmentResponse.json();
+
+                assignedSongIds =
+                    new Set(
+                        (
+                            assignmentData
+                                .song_ids ||
+                            []
+                        ).map(Number)
+                    );
+
+            } else {
+
+                assignedSongIds =
+                    new Set();
+
+            }
+
+        }
+
+        renderSongs();
+
+    } catch (error) {
+
+        console.error(error);
+
+        /*
+         * If assignment loading fails,
+         * start empty rather than corrupting
+         * existing data.
+         */
+
+        assignedSongIds =
+            new Set();
+
+        renderSongs();
+
+        showToast(
+            "Could not load existing assignments",
+            "error"
+        );
+
+    }
+
+}
+
+
+/* RENDER SONGS */
+
+function renderSongs() {
+
+    const query =
+        search.value
+            .trim()
+            .toLowerCase();
+
+    const filtered =
+        songs.filter(song => {
+
+            if (!query) {
+                return true;
+            }
+
+            const title =
+                String(song.title || "")
+                    .toLowerCase();
+
+            const artist =
+                String(song.artist || "")
+                    .toLowerCase();
+
+            return (
+                title.includes(query) ||
+                artist.includes(query)
+            );
+
+        });
+
+    visibleSongIds =
+        filtered.map(song => song.id);
+
+    visibleCount.textContent =
+        filtered.length;
+
+    updateSelectedCount();
+
+    songList.innerHTML = "";
+
+    if (!selectedUser) {
+
+        songList.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">♫</div>
+                <div class="empty-title">
+                    No user selected
+                </div>
+                <div class="empty-text">
+                    Select a user first.
+                </div>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    if (!filtered.length) {
+
+        songList.innerHTML = `
+            <div class="empty">
+                <div class="empty-icon">⌕</div>
+                <div class="empty-title">
+                    No songs found
+                </div>
+                <div class="empty-text">
+                    Try another search.
+                </div>
+            </div>
+        `;
+
+        return;
+
+    }
+
+    filtered.forEach(song => {
+
+        const row =
+            document.createElement("div");
+
+        const selected =
+            assignedSongIds.has(
+                Number(song.id)
+            );
+
+        row.className =
+            `song${selected ? " selected" : ""}`;
+
+        const checkbox =
+            document.createElement("input");
+
+        checkbox.type = "checkbox";
+
+        checkbox.className =
+            "checkbox";
+
+        checkbox.checked =
+            selected;
+
+        const art =
+            document.createElement("div");
+
+        art.className =
+            "song-art";
+
+        art.textContent = "♪";
+
+        const info =
+            document.createElement("div");
+
+        info.className =
+            "song-info";
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "song-title";
+
+        title.textContent =
+            song.title || "Untitled";
+
+        const artist =
+            document.createElement("div");
+
+        artist.className =
+            "song-artist";
+
+        artist.textContent =
+            song.artist || "Unknown artist";
+
+        info.appendChild(title);
+
+        info.appendChild(artist);
+
+        row.appendChild(checkbox);
+
+        row.appendChild(art);
+
+        row.appendChild(info);
+
+        function toggle() {
+
+            const id =
+                Number(song.id);
+
+            if (
+                assignedSongIds.has(id)
+            ) {
+
+                assignedSongIds.delete(id);
+
+                row.classList.remove(
+                    "selected"
+                );
+
+                checkbox.checked = false;
+
+            } else {
+
+                assignedSongIds.add(id);
+
+                row.classList.add(
+                    "selected"
+                );
+
+                checkbox.checked = true;
+
+            }
+
+            updateSelectedCount();
+
+        }
+
+        checkbox.addEventListener(
+            "change",
+            event => {
+
+                event.stopPropagation();
+
+                const id =
+                    Number(song.id);
+
+                if (checkbox.checked) {
+
+                    assignedSongIds.add(id);
+
+                    row.classList.add(
+                        "selected"
+                    );
+
+                } else {
+
+                    assignedSongIds.delete(id);
+
+                    row.classList.remove(
+                        "selected"
+                    );
+
+                }
+
+                updateSelectedCount();
+
+            }
+        );
+
+        row.addEventListener(
+            "click",
+            event => {
+
+                if (
+                    event.target !== checkbox
+                ) {
+                    toggle();
+                }
+
+            }
+        );
+
+        songList.appendChild(row);
+
+    });
+
+}
+
+
+/* SELECTED COUNT */
+
+function updateSelectedCount() {
+
+    selectedCount.textContent =
+        assignedSongIds.size;
+
+}
+
+
+/* SEARCH */
+
+search.addEventListener(
+    "input",
+    renderSongs
+);
+
+
+/* SELECT ALL */
+
+document
+    .getElementById("selectAll")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (!selectedUser) {
+
+                showToast(
+                    "Select a user first",
+                    "error"
+                );
+
+                return;
+            }
+
+            visibleSongIds.forEach(id => {
+
+                assignedSongIds.add(
+                    Number(id)
+                );
+
+            });
+
+            renderSongs();
+
+        }
+    );
+
+
+/* CLEAR */
+
+document
+    .getElementById("clearAll")
+    .addEventListener(
+        "click",
+        () => {
+
+            if (!selectedUser) {
+
+                showToast(
+                    "Select a user first",
+                    "error"
+                );
+
+                return;
+            }
+
+            visibleSongIds.forEach(id => {
+
+                assignedSongIds.delete(
+                    Number(id)
+                );
+
+            });
+
+            renderSongs();
+
+        }
+    );
+
+
+/* SAVE */
+
+document
+    .getElementById("saveButton")
+    .addEventListener(
+        "click",
+        saveAssignments
+    );
+
+
+async function saveAssignments() {
+
+    if (!selectedUser) {
+
+        showToast(
+            "Select a user first",
+            "error"
+        );
+
+        return;
+    }
+
+    const button =
+        document.getElementById(
+            "saveButton"
+        );
+
+    const original =
+        button.textContent;
+
+    button.disabled = true;
+
+    button.textContent =
+        "Saving...";
+
+    try {
+
+        const response =
+            await fetch(
+                API,
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        user_id:
+                            selectedUser.id,
+
+                        song_ids:
+                            Array.from(
+                                assignedSongIds
+                            )
+
+                    })
+
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+            throw new Error(
+                data.error ||
+                "Failed to save"
+            );
+
+        }
+
+        showToast(
+            `Saved ${data.count} song${
+                data.count === 1
+                    ? ""
+                    : "s"
+            } for ${
+                selectedUser.name ||
+                selectedUser.username
+            }`
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        showToast(
+            error.message,
+            "error"
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+        button.textContent =
+            original;
+
+    }
+
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        String(value ?? "");
+
+    return div.innerHTML;
+
+}
+
+
+/* INITIAL */
+
+loadData();
+
+</script>
+
+</body>
+</html>
